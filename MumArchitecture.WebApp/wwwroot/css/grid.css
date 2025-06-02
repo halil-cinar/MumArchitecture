@@ -1,0 +1,106 @@
+﻿
+.form-floating > label {
+    color: #999;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+}
+
+.form-control:focus ~ label,
+.form-control:not(:placeholder-shown) ~ label {
+    transform: translateY(-1.6rem) scale(0.95);
+    font-weight: bold;
+    font-size: 0.85rem;
+    color: #333;
+}
+
+input::placeholder {
+    color: transparent;
+}
+
+.btn-orange {
+    background-color: orange;
+    color: white;
+    font-weight: bold;
+    padding: 0.4rem 1.2rem;
+    font-size: 0.9rem;
+    transition: background-color 0.3s;
+}
+
+    .btn-orange:hover {
+        background-color: #ff8000;
+    }
+
+.purple-text {
+    color: purple !important;
+    font-weight: 600;
+}
+
+.dropdown-toggle::after {
+    display: none;
+}
+
+.action-menu {
+    border: none;
+    background: transparent;
+    font-size: 1.25rem;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+    .action-menu:hover {
+        transform: rotate(90deg);
+    }
+
+.dropdown-menu {
+    min-width: auto;
+}
+
+.table-container {
+    border-radius: 0.75rem;
+    overflow: hidden;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+}
+
+.table {
+    background-color: #fff;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+    .table thead {
+        background: linear-gradient(to right, #ff9900, #ffae42);
+        color: white;
+        font-weight: 600;
+    }
+
+        .table thead th {
+            padding: 1rem;
+            border-bottom: none;
+        }
+
+    .table tbody tr {
+        transition: background-color 0.3s ease-in-out;
+    }
+
+        .table tbody tr:hover {
+            background-color: #fff6e6;
+        }
+
+    .table td, .table th {
+        padding: 0.9rem 1rem;
+        vertical-align: middle;
+    }
+
+.table-striped tbody tr:nth-of-type(odd) {
+    background-color: #fffdf7;
+}
+
+.pagination .page-link {
+    color: #333;
+}
+
+.pagination .active .page-link {
+    background-color: orange;
+    border-color: orange;
+    color: #fff;
+}
