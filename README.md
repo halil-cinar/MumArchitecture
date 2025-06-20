@@ -98,6 +98,12 @@ MumArchitecture is a base architecture project designed to provide a clean, exte
 - Implement new repositories or services in the DataAccess and Business layers.
 - Create new Razor Pages with TagHelpers for UI features.
 
+## Versions
+
+| Version | Date | Changes |
+|---------|------|---------|
+| 1.1.0   | 2025-06-21 | **EnableCachingAttribute** and caching middleware added. Endpoints decorated with `EnableCaching` are now cached for a configurable duration, and the middleware operates dynamically on each incoming request. |
+
 ---
 
 This project provides a robust starting point for scalable, maintainable, and testable enterprise applications using modern .NET technologies.
