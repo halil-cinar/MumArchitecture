@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using MumArchitecture.Business.Extensions;
 using MumArchitecture.WebApp.Models;
 using System.Diagnostics;
 
@@ -13,10 +14,21 @@ namespace MumArchitecture.WebApp.Controllers
             _logger = logger;
         }
 
+        [EnableCaching(80)] 
         public IActionResult Index()
         {
+            Debug.WriteLine("Index action called at: " + DateTime.Now);
+            Thread.Sleep(5000);
             return View();
         }
+        [EnableCaching] 
+        public IActionResult Get()
+        {
+            Debug.WriteLine("Index action called at: " + DateTime.Now);
+            Thread.Sleep(5000); 
+            return Json(new {a="dddd"});
+        }
+
 
         public IActionResult Privacy()
         {
