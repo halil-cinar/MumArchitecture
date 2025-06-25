@@ -1,0 +1,29 @@
+﻿@model MumArchitecture.Domain.ListDtos.MenuListDto
+
+@{
+    var hasChildren = Model.Children?.Any() == true;
+}
+
+<li class="nav-item">
+    <a href="@(string.IsNullOrWhiteSpace(Model.Url) && hasChildren ? "#" : Model.Url)"
+       class="nav-link">
+        <i class="nav-icon @(Model.Icon ?? "far fa-circle")"></i>
+        <p>
+            @Model.Name
+            @if (hasChildren)
+            {
+                <i class="right fas fa-angle-left"></i>
+            }
+        </p>
+    </a>
+
+    @if (hasChildren)
+    {
+        <ul class="nav nav-treeview">
+            @foreach (var child in Model.Children.OrderBy(c => c.DisplayOrder))
+            {
+                <partial name="_SidebarMenuItem" model="child" />
+            }
+        </ul>
+    }
+</li>

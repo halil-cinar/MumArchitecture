@@ -3,6 +3,7 @@ using Microsoft.Extensions.Caching.Memory;
 using MumArchitecture.Business.Extensions;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -18,7 +19,7 @@ namespace MumArchitecture.Business.Middleware
             _next = next;
             _cache = cache;
         }
-
+        
         public async Task InvokeAsync(HttpContext context)
         {
             var endpoint = context.GetEndpoint();
@@ -42,7 +43,7 @@ namespace MumArchitecture.Business.Middleware
             context.Response.Body = buffer;
 
             await _next(context);
-
+            
             if (context.Response.StatusCode == StatusCodes.Status200OK)
             {
                 buffer.Position = 0;
@@ -67,7 +68,9 @@ namespace MumArchitecture.Business.Middleware
             var p = ctx.Request.Path.ToString().ToLowerInvariant();
             var q = ctx.Request.QueryString.ToString().ToLowerInvariant();
             var auth = ctx.Request.Cookies?["Authorization"]?.ToLowerInvariant();
-            return $"{p}{q}{auth}";
+            var ip= ctx.Connection.RemoteIpAddress?.ToString();
+            var acceptlang = CultureInfo.DefaultThreadCurrentCulture?.TwoLetterISOLanguageName??"";//ctx.Request.Headers["Accept-Language"].ToString();
+            return $"{acceptlang}{p}{q}{auth}{ip}";
         }
     }
 }

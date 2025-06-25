@@ -62,6 +62,10 @@ namespace MumArchitecture.Business.Result
                         continue;
                     }
                 }
+                if (string.IsNullOrEmpty(kvp.Value))
+                {
+                    continue;
+                }
                 var property = entityType.GetProperty(kvp.Key, BindingFlags.Public | BindingFlags.Instance | BindingFlags.IgnoreCase);
                 if (property != null)
                 {

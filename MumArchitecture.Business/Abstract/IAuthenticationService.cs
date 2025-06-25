@@ -18,9 +18,14 @@ namespace MumArchitecture.Business.Abstract
         public Task<SystemResult<Nothing>> SignUp(UserDto user);
         public Task<SystemResult<UserListDto>> GetUser(string token);
         public Task<SystemResult<List<MethodListDto>>> GetUserMethods(string token);
-        internal Task<int> GetUserIdFromJWTToken(string token);
-        public int AuthUserId { get; }
+        internal Task<int?> GetUserIdFromJWTToken(string token);
+        internal Task<SessionListDto?> GetSession(string token);
+
+        public Task<SystemResult<SessionListDto>> CreateSession();
+
+        public int? AuthUserId { get; }
         public string AuthToken { get; }
+        public bool IsLogin { get;}
 
     }
 }

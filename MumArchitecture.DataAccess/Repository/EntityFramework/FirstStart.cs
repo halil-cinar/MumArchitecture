@@ -41,7 +41,7 @@ namespace MumArchitecture.DataAccess.Repository.EntityFramework
 
         public static void CreateDB()
         {
-            var creted = context.Database.EnsureCreated();
+            context.Database.Migrate();
             if (context.Users.Count() == 0)
             {
                 // Create Roles

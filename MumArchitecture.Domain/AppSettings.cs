@@ -24,6 +24,7 @@ namespace MumArchitecture.Domain
         public string? JwtSecret { get; set; }
         public string? LocalizationLangs { get; set; }
         public string? DefaultCulture { get; set; }
+        public string? AllowedOrigin { get; set; }
         public IServiceProvider? serviceProvider { get; set; }
     }
 

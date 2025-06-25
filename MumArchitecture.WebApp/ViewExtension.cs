@@ -10,7 +10,7 @@ using MumArchitecture.Business.Abstract;
 using MumArchitecture.Domain.Abstract;
 
 
-namespace MumArchitecture.Web
+namespace MumArchitecture.WebApp
 {
     public static class ViewExtension
     {
@@ -19,7 +19,7 @@ namespace MumArchitecture.Web
             razorPage.TempData.TryGetValue("StateMessage", out object? message);
             return message?.ToString()??"";
         }
-        public static string GetSuccessMessage(this RazorPage razorPage)
+        public static string GetSuccessMessage(this RazorPageBase razorPage)
         {
             razorPage.TempData.TryGetValue("SuccessMessage", out object? message);
             return message?.ToString() ?? "";
@@ -90,6 +90,12 @@ namespace MumArchitecture.Web
             }
 
             return true;
+        }
+        public static bool IsLogin(this RazorPage page)
+        {
+            var context = page.ViewContext.HttpContext;
+            var authorizationHeader = context.Request.Headers["Authorization"].FirstOrDefault();
+            return !string.IsNullOrEmpty(authorizationHeader);
         }
 
         public static void SetRedirect(this Controller controller, string? redirectUrl)

@@ -22,4 +22,7 @@
 	<ItemGroup>
 	  <ProjectReference Include="..\MumArchitecture.Domain\MumArchitecture.Domain.csproj" />
 	</ItemGroup>
+	<ItemGroup>
+	  <Folder Include="Migrations\" />
+	</ItemGroup>
 </Project>

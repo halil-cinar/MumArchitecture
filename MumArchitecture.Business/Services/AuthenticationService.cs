@@ -39,10 +39,14 @@ namespace MumArchitecture.Business.Services
             _sessionRepository = serviceProvider.GetRequiredService<IRepository<Session>>();
         }
 
-        public int AuthUserId
+        public int? AuthUserId
         {
             get
             {
+                if (string.IsNullOrEmpty(AuthToken))
+                {
+                    return null;
+                }
                 var result = GetUserIdFromJWTToken(AuthToken);
                 result.Wait();
                 return result.Result;
@@ -57,13 +61,39 @@ namespace MumArchitecture.Business.Services
             }
         }
 
+        public bool IsLogin
+        {
+            get
+            {
+                return !string.IsNullOrEmpty(AuthToken);
+            }
+        }
+
+        async Task<SessionListDto?> IAuthenticationService.GetSession(string token)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(token))
+                {
+                    return null;
+                }
+                var session = await _sessionRepository.Get(x => x.Token == token);
+                return session;
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
         public async Task<SystemResult<UserListDto>> GetUser(string token)
         {
 
             var result = new SystemResult<UserListDto>();
             try
             {
-                int userId = await GetUserIdFromJWTToken(token);
+
+                int? userId = await GetUserIdFromJWTToken(token);
                 var user = await _userRepository.Get(x => x.Id == userId);
                 if (user == null)
                 {
@@ -85,15 +115,13 @@ namespace MumArchitecture.Business.Services
             return result;
         }
 
-
-
         public async Task<SystemResult<List<MethodListDto>>> GetUserMethods(string token)
         {
             var result = new SystemResult<List<MethodListDto>>();
             try
             {
-                int userId = await GetUserIdFromJWTToken(token);
-                var methodResult = await _roleService.GetUserMethods(userId);
+                int? userId = await GetUserIdFromJWTToken(token);
+                var methodResult = await _roleService.GetUserMethods(userId ?? 0);
                 if (!methodResult.IsSuccess)
                 {
                     result.AddMessage(methodResult);
@@ -120,36 +148,82 @@ namespace MumArchitecture.Business.Services
             var result = new SystemResult<SessionListDto>();
             try
             {
-                var user = _userRepository.Get(u => u.Email == identity.Email) ?? throw new UserException(Lang.Value(Messages.RecordNotFound));
+                var user = await _userRepository.Get(u => u.Email == identity.Email) ?? throw new UserException(Lang.Value(Messages.RecordNotFound));
                 var identityResult = await _identityService.CheckPassword(identity);
                 if (!identityResult.IsSuccess || identityResult.Data == false)
                 {
                     throw new UserException(Lang.Value("EmailOrPasswordIsWrong"));
                 }
-                // JWT token oluşturulması
-                var tokenHandler = new JwtSecurityTokenHandler();
-                var key = Encoding.UTF8.GetBytes(AppSettings.instance!.JwtSecret!);
-                var tokenDescriptor = new SecurityTokenDescriptor
-                {
-                    Subject = new ClaimsIdentity(new Claim[]
-                    {
-                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                        // Gerekirse ek claim'ler eklenebilir
-                    }),
-                    //Expires = DateTime.UtcNow.AddHours(1),
-                    SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
-                };
-
-                var token = tokenHandler.CreateToken(tokenDescriptor);
-                var tokenString = tokenHandler.WriteToken(token);
-
+                string tokenString = CreateJWTToken(user);
+                var oldSession = await _sessionRepository.Get(x => x.Token == AuthToken);
                 // Oluşturulan token bilgilerini SessionListDto içerisine aktarıyoruz.
                 var session = new Session
                 {
+
                     Token = tokenString,
                     IpAddress = _httpContextAccessor.HttpContext?.Connection.GetFullIpAddress(),
                     UserAgent = _httpContextAccessor.HttpContext?.Request?.Headers?["User-Agent"] ?? throw new UserException("YouMustUseABrowser"),
                     UserId = user.Id,
+                    ExpiresAt = DateTime.UtcNow.AddDays(1)
+                };
+                if (oldSession != null)
+                {
+                    session.Id = oldSession.Id;
+                    await _sessionRepository.Update(session);
+                }
+                else
+                {
+                    await _sessionRepository.Add(session);
+                }
+                result.Data = session;
+            }
+            catch (UserException ex)
+            {
+                result.AddMessage(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                LogManager.LogException(ex);
+                result.AddDefaultErrorMessage(ex);
+            }
+
+            return result;
+        }
+
+        private string CreateJWTToken(User? user)
+        {
+            // JWT token oluşturulması
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var key = Encoding.UTF8.GetBytes(AppSettings.instance!.JwtSecret!);
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(new Claim[]
+                {
+                new Claim(ClaimTypes.NameIdentifier, (user?.Id??0).ToString()),
+                    // Gerekirse ek claim'ler eklenebilir
+                }),
+                //Expires = DateTime.UtcNow.AddHours(1),
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+            };
+
+            var token = tokenHandler.CreateToken(tokenDescriptor);
+            var tokenString = tokenHandler.WriteToken(token);
+            return tokenString;
+        }
+
+        public async Task<SystemResult<SessionListDto>> CreateSession()
+        {
+            var result = new SystemResult<SessionListDto>();
+            try
+            {
+                var jwtToken = CreateJWTToken(null);
+                var session = new Session
+                {
+                    Token = jwtToken,
+                    IpAddress = _httpContextAccessor.HttpContext?.Connection.GetFullIpAddress(),
+                    UserAgent = _httpContextAccessor.HttpContext?.Request?.Headers?["User-Agent"] ?? throw new UserException("YouMustUseABrowser"),
+                    UserId = 0,
+                    ExpiresAt = DateTime.UtcNow.AddDays(1)
                 };
                 await _sessionRepository.Add(session);
 
@@ -167,13 +241,12 @@ namespace MumArchitecture.Business.Services
 
             return result;
         }
-
         public async Task<SystemResult<Nothing>> LogOut(string token)
         {
             var result = new SystemResult<Nothing>();
             try
             {
-                int userId = await GetUserIdFromJWTToken(token);
+                int? userId = await GetUserIdFromJWTToken(token);
                 var user = await _userRepository.Get(x => x.Id == userId);
                 if (user == null)
                 {
@@ -220,8 +293,12 @@ namespace MumArchitecture.Business.Services
             return result;
         }
 
-        private async Task<int> GetUserIdFromJWTToken(string token)
+        private async Task<int?> GetUserIdFromJWTToken(string token)
         {
+            if (string.IsNullOrEmpty(token))
+            {
+                return default;
+            }
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.UTF8.GetBytes(AppSettings.instance!.JwtSecret!);
 
@@ -231,7 +308,7 @@ namespace MumArchitecture.Business.Services
                 IssuerSigningKey = new SymmetricSecurityKey(key),
                 ValidateIssuer = false,       // İsteğe bağlı: Üretici doğrulaması yapılacaksa true yapılabilir.
                 ValidateAudience = false,     // İsteğe bağlı: Hedef kitle doğrulaması yapılacaksa true yapılabilir.
-                //ValidateLifetime = true,      // Token süresi kontrol edilsin.
+                ValidateLifetime = false,      // Token süresi kontrol edilsin.
                 ClockSkew = TimeSpan.Zero     // Fazladan zaman farkı tanımlanmayacak.
             };
 
@@ -245,15 +322,22 @@ namespace MumArchitecture.Business.Services
             {
                 throw new UserException(Lang.Value(Messages.RecordNotFound));
             }
-            var exist = await _sessionRepository.Count(x => x.Token == token) > 0;
-            if (!exist)
+            var session = await _sessionRepository.Get(x => x.Token == token);
+            if (session == null)
             {
                 throw new UserException(Lang.Value(Messages.RecordNotFound));
             }
-            return userId;
+            if (session.ExpiresAt.HasValue &&
+                (session.ExpiresAt.Value - DateTime.UtcNow).TotalHours > 0 &&
+                (session.ExpiresAt.Value - DateTime.UtcNow).TotalHours < 3)
+            {
+                session.ExpiresAt = DateTime.UtcNow.AddDays(1);
+                await _sessionRepository.Update(session);
+            }
+            return userId == 0 ? null : userId;
         }
 
-        Task<int> IAuthenticationService.GetUserIdFromJWTToken(string token)
+        Task<int?> IAuthenticationService.GetUserIdFromJWTToken(string token)
         {
             return GetUserIdFromJWTToken(token);
         }

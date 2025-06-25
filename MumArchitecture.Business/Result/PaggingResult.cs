@@ -32,7 +32,7 @@ namespace MumArchitecture.Business.Result
                 ItemCount = ItemCount,
                 AllCount = AllCount,
             });
-
+            
             return result;
 
         }

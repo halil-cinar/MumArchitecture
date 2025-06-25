@@ -60,7 +60,9 @@ input::placeholder {
     overflow: hidden;
     box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
 }
-
+.table-responsive{
+    min-height: 200px;
+}
 .table {
     background-color: #fff;
     border-collapse: separate;
@@ -103,4 +105,9 @@ input::placeholder {
     background-color: orange;
     border-color: orange;
     color: #fff;
+}
+
+.content form {
+    display: flex;
+    flex-direction: column;
 }

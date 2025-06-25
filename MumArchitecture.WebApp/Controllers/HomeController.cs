@@ -1,24 +1,27 @@
 using Microsoft.AspNetCore.Mvc;
+using MumArchitecture.Business.Abstract;
 using MumArchitecture.Business.Extensions;
 using MumArchitecture.WebApp.Models;
 using System.Diagnostics;
+using System.Text.Json;
+using System.Threading.Tasks;
 
 namespace MumArchitecture.WebApp.Controllers
 {
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        private readonly IAuthenticationService _authenticationService;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ILogger<HomeController> logger, IAuthenticationService authenticationService)
         {
             _logger = logger;
+            _authenticationService = authenticationService;
         }
 
-        [EnableCaching(80)] 
-        public IActionResult Index()
+        //[EnableCaching(80)] 
+        public async Task<IActionResult> Index()
         {
-            Debug.WriteLine("Index action called at: " + DateTime.Now);
-            Thread.Sleep(5000);
             return View();
         }
         [EnableCaching] 

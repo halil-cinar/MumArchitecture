@@ -1,0 +1,54 @@
+﻿@{
+    ViewData["title"] = Lang.Value("User");
+    ViewData["breadcreamp"] = string.Join("-", Lang.Value("Home"), Lang.Value("User"));
+}
+
+<grid id="gridUsers" class="table table-hover" url="@Url.Action("Read", "Home")">
+    <filters>
+        <field for="Name" type="TEXT" lg-size="3" label="@Lang.Value("Name")" />
+        <field for="Surname" type="TEXT" lg-size="3" label="@Lang.Value("Surname")" />
+        <field for="Phone" type="TEXT" lg-size="3" label="@Lang.Value("Phone")" />
+        <field for="Email" type="TEXT" lg-size="3" label="@Lang.Value("Email")" />
+        <field for="IsActive" type="SELECT" lg-size="3" label="@Lang.Value("IsActive")"
+               items="@(new[] { new SelectListItem { Value = "", Text = Lang.Value("All") },
+                                             new SelectListItem { Value = "true", Text = Lang.Value("Yes") },
+                                             new SelectListItem { Value = "false", Text = Lang.Value("No") } })" />
+
+        <gridbutton icon="bi bi-eye"
+                    title="@Lang.Value("Add")"
+                    class="btn btn-info"
+                    modal="userModal"></gridbutton>
+    </filters>
+
+    <column for="Id" title="@Lang.Value("Id")" style="width:4rem;" />
+    <column for="Name" title="@Lang.Value("Name")" />
+    <column for="Surname" title="@Lang.Value("Surname")" />
+    <column for="Phone" title="@Lang.Value("Phone")" />
+    <column for="Email" title="@Lang.Value("Email")" />
+    <column for="EmailVerified" title="@Lang.Value("EmailVerified")" />
+    <column for="IsActive" title="@Lang.Value("IsActive")" />
+
+    <rowbutton icon="bi bi-eye"
+               title="@Lang.Value("Edit")"
+               class="btn btn-info"
+               modal="userModal" />
+
+    <rowbutton icon="bi bi-trash"
+               title="@Lang.Value("Delete")"
+               class="btn btn-danger"
+               url="@Url.Action("Delete", "User", new { id = "[id]" })" />
+</grid>
+
+<addupdatemodal id="userModal" title="@Lang.Value("UserEdit")" get-url="@Url.Action("Get", "Home")" url="@Url.Action("Save", "Home")" size="xl">
+    <input-box name="Name" label="@Lang.Value("Name")" required="true" />
+    <input-box name="Surname" label="@Lang.Value("Surname")" required="true" />
+    <input-box name="Phone" label="@Lang.Value("Phone")" />
+    <input-box name="Email" label="@Lang.Value("Email")" required="true" />
+    <input-box name="EmailVerified" label="@Lang.Value("EmailVerified")" type="CHECKBOX" />
+    <input-box name="Address" label="@Lang.Value("Address")" />
+    <input-box name="IdentityNumber" label="@Lang.Value("IdentityNumber")" />
+    <input-box name="IsActive" label="@Lang.Value("IsActive")" type="CHECKBOX" />
+    <input-box name="IsNotificationAllowed" label="@Lang.Value("IsNotificationAllowed")" type="CHECKBOX" />
+
+    <input-box name="Id" type="HIDDEN" />
+</addupdatemodal> 

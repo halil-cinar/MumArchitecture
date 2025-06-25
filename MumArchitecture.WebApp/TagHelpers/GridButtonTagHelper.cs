@@ -9,7 +9,7 @@ namespace MumArchitecture.Web.TagHelpers
         public string Id { get; set; } = string.Empty;
         public string Icon { get; set; } = string.Empty;
         public string Title { get; set; } = string.Empty;
-        public string Class { get; set; } = string.Empty;
+        public string Class { get; set; } = "mx-1";
         public string Color { get; set; } = "orange";
         public string OnClick { get; set; } = string.Empty;
         public string Modal { get; set; } = string.Empty;
