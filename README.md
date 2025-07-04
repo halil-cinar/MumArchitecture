@@ -103,6 +103,7 @@ MumArchitecture is a base architecture project designed to provide a clean, exte
 
 | Version | Date | Changes |
 |---------|------|---------|
+| 1.3.0   | 2025-07-04 | MumArchitecture features and error handling improved; optional parameters added to `IMenuService` for filtering; error handling enhanced in `LogManager` and `SessionMiddleware`; default Number set in `Filter` and new methods added to `PaggingResult` and `SystemResult`; new classes introduced: `EArea`, `ExcelDataListDto`, and `IExcelDataService` (in progress); `MenuController`, `RoleController`, and `UserController` refined for better data management; Razor views updated for new features and CRUD operations; JavaScript helper functions in **Mum.js** updated; database migrations added for new fields and relationships. |
 | 1.2.0   | 2025-06-25 | Added five middleware (**Security**, **RequestLog**, **Session**, **Validation**, **Caching**); introduced **Admin Panel** with basic designs and dynamic, role-based menus; provided admin UI to ease manual localization edits; adopted **MVC Areas**; generated migrations; improved tag helpers. |
 | 1.1.0   | 2025-06-21 | **EnableCachingAttribute** and caching middleware added. Endpoints decorated with `EnableCaching` are now cached for a configurable duration, and the middleware operates dynamically on each incoming request. |
 
