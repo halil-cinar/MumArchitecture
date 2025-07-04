@@ -15,7 +15,7 @@ namespace MumArchitecture.Domain.Dtos
             return new MethodListDto
             {
                 Id = entity.Id,
-                Name = entity.Name
+                Name = entity.Name,
             };
         }
 

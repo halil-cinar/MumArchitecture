@@ -1,18 +1,15 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MumArchitecture.Business.Abstract;
-using MumArchitecture.Business.Extensions;
 using MumArchitecture.Domain.Dtos;
 using MumArchitecture.Domain.Entities;
-using MumArchitecture.Web;
 
 namespace MumArchitecture.WebApp.Areas.Admin.Controllers
 {
-    [Area("Admin")]
-    public class HomeController : Controller
+    public class UserController : Controller
     {
         private readonly IUserService _userService;
 
-        public HomeController(IUserService userService)
+        public UserController(IUserService userService)
         {
             _userService = userService;
         }

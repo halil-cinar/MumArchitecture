@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking.Internal;
 using MumArchitecture.Domain;
 using MumArchitecture.Domain.Entities;
 using System;
@@ -17,7 +18,7 @@ namespace MumArchitecture.DataAccess.Repository.EntityFramework
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.UseSqlServer(AppSettings.instance!.ConnectionStrings!.DefaultConnection);
-            optionsBuilder.EnableSensitiveDataLogging();
+            //optionsBuilder.EnableSensitiveDataLogging();
             base.OnConfiguring(optionsBuilder);
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -29,6 +30,7 @@ namespace MumArchitecture.DataAccess.Repository.EntityFramework
             }
             base.OnModelCreating(modelBuilder);
         }
+        
 
         public DbSet<Identity> Identities { get; set; }
         public DbSet<MailBox> MailBoxes { get; set; }
@@ -43,4 +45,6 @@ namespace MumArchitecture.DataAccess.Repository.EntityFramework
         public DbSet<User> Users { get; set; }
         public DbSet<Menu> Menus { get; set; }
     }
+
+
 }

@@ -1,11 +1,12 @@
 ﻿using LinqKit;
 using Microsoft.AspNetCore.Http;
 using Microsoft.VisualStudio.Services.Common;
-using NLog.Filters;
 using MumArchitecture.DataAccess;
 using MumArchitecture.Domain.Abstract;
+using NLog.Filters;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -18,7 +19,7 @@ namespace MumArchitecture.Business.Result
     {
 
         public int Page { get; set; } = 0;
-        public int Count { get; set; } = 50;
+        public int Count { get; set; } = 20;
         protected List<Expression<Func<TEntity, bool>>>? EntityFilter { get; private set; }
         protected List<Expression<Func<TEntity, object?>>>? Includes { get; private set; }
         protected Expression<Func<TEntity, object>>? Order { get; private set; }
@@ -31,60 +32,88 @@ namespace MumArchitecture.Business.Result
         {
             var filter = new Filter<TEntity>();
             var filters = new List<Expression<Func<TEntity, bool>>>();
+
             var entityType = typeof(TEntity);
             var parameter = Expression.Parameter(entityType, "x");
 
             foreach (var kvp in httpQuery)
             {
-                if (kvp.Key.Equals("page", StringComparison.OrdinalIgnoreCase) || kvp.Key.Equals("count", StringComparison.OrdinalIgnoreCase))
+                if (kvp.Key.Equals("page", StringComparison.OrdinalIgnoreCase))
                 {
-                    if (kvp.Key.Equals("page", StringComparison.OrdinalIgnoreCase))
-                    {
-                        filter.Page = int.TryParse(kvp.Value, out int page) ? page : 0;
-                    }
-                    else if (kvp.Key.Equals("count", StringComparison.OrdinalIgnoreCase))
-                    {
-                        filter.Count = int.TryParse(kvp.Value, out int count) ? count : 50;
-                    }
+                    filter.Page = int.TryParse(kvp.Value, out var page) ? page : 0;
+                    continue;
                 }
+
+                if (kvp.Key.Equals("count", StringComparison.OrdinalIgnoreCase))
+                {
+                    filter.Count = int.TryParse(kvp.Value, out var count) ? count : 50;
+                    continue;
+                }
+
                 if (kvp.Key.Equals("search", StringComparison.OrdinalIgnoreCase))
                 {
                     filter.SearchKey = kvp.Value;
+                    continue;
                 }
+
+                if (kvp.Key.Equals("format", StringComparison.OrdinalIgnoreCase) && kvp.Value.Equals("select", StringComparison.OrdinalIgnoreCase))
+                {
+                    filter.All();
+                    continue;
+                }
+
+
                 if (kvp.Key.Equals("order", StringComparison.OrdinalIgnoreCase))
                 {
                     try
                     {
-                        filter.Order = Expression.Lambda<Func<TEntity, object>>(Expression.Property(parameter, kvp.Value), parameter);
+                        filter.Order = Expression.Lambda<Func<TEntity, object>>(
+                            Expression.Convert(Expression.Property(parameter, kvp.Value), typeof(object)),
+                            parameter);
                     }
-                    catch (Exception)
+                    catch
                     {
-                        continue;
+                        /* alan bulunamazsa sıralamayı yoksay */
                     }
-                }
-                if (string.IsNullOrEmpty(kvp.Value))
-                {
+
                     continue;
                 }
-                var property = entityType.GetProperty(kvp.Key, BindingFlags.Public | BindingFlags.Instance | BindingFlags.IgnoreCase);
-                if (property != null)
+
+                if (string.IsNullOrEmpty(kvp.Value))
+                    continue;
+
+                var property = entityType.GetProperty(kvp.Key,
+                    BindingFlags.Public | BindingFlags.Instance | BindingFlags.IgnoreCase);
+
+                if (property is null)
+                    continue;
+
+                try
                 {
-                    try
-                    {
-                        object convertedValue = Convert.ChangeType(kvp.Value, property.PropertyType);
+                    Expression left = Expression.Property(parameter, property);
+                    var targetType = Nullable.GetUnderlyingType(property.PropertyType) ?? property.PropertyType;
 
-                        //x => x.Property == convertedValue
-                        Expression left = Expression.Property(parameter, property);
-                        Expression right = Expression.Constant(convertedValue, property.PropertyType);
-                        Expression equality = Expression.Equal(left, right);
-                        var lambda = Expression.Lambda<Func<TEntity, bool>>(equality, parameter);
+                    object converted = targetType.IsEnum
+                            ? Enum.Parse(targetType, kvp.Value, true)
+                            : Convert.ChangeType(kvp.Value, targetType, CultureInfo.InvariantCulture);
 
-                        filters.Add(lambda);
-                    }
-                    catch (Exception)
-                    {
-                        continue;
-                    }
+                    var constant = Expression.Constant(converted, targetType);
+
+                    Expression right = targetType != property.PropertyType
+                        ? Expression.Convert(constant, property.PropertyType)
+                        : constant;
+
+
+                    Expression body = property.PropertyType == typeof(string)
+                        ? Expression.Call(left, nameof(string.Contains), Type.EmptyTypes, right)
+                        : Expression.Equal(left, right);
+
+                    var lambda = Expression.Lambda<Func<TEntity, bool>>(body, parameter);
+                    filters.Add(lambda);
+                }
+                catch
+                {
+                    /* dönüştürülemeyen değerleri yoksay */
                 }
             }
 
@@ -230,7 +259,7 @@ namespace MumArchitecture.Business.Result
             //{
             //    SearchKey = searchKey;
             //}
-            if(searchparams == null || searchparams.Length == 0||string.IsNullOrEmpty(SearchKey))
+            if (searchparams == null || searchparams.Length == 0 || string.IsNullOrEmpty(SearchKey))
             {
                 return this;
             }
@@ -238,7 +267,7 @@ namespace MumArchitecture.Business.Result
             if (SearchKey != null)
             {
                 var searchKeyLower = SearchKey.ToLower();
-                foreach(var search in searchparams)
+                foreach (var search in searchparams)
                 {
                     var property = typeof(TEntity).GetProperty(search, BindingFlags.Public | BindingFlags.Instance | BindingFlags.IgnoreCase);
                     if (property != null)
@@ -251,7 +280,7 @@ namespace MumArchitecture.Business.Result
                         predicate = predicate.Or(Expression.Lambda<Func<TEntity, bool>>(containsExpression, parameter));
                     }
                 }
-//                predicate = predicate.And(x => search.Invoke(x).Where(x => !string.IsNullOrEmpty(x)).Aggregate((x, acc) => acc + " " + x)!.Contains(searchKeyLower));
+                //                predicate = predicate.And(x => search.Invoke(x).Where(x => !string.IsNullOrEmpty(x)).Aggregate((x, acc) => acc + " " + x)!.Contains(searchKeyLower));
 
             }
             if (EntityFilter == null)

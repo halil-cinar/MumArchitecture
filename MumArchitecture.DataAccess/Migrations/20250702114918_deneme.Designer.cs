@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MumArchitecture.DataAccess.Repository.EntityFramework;
 
@@ -11,9 +12,11 @@ using MumArchitecture.DataAccess.Repository.EntityFramework;
 namespace MumArchitecture.DataAccess.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    partial class DatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20250702114918_deneme")]
+    partial class deneme
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -151,9 +154,6 @@ namespace MumArchitecture.DataAccess.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("Area")
-                        .HasColumnType("int");
-
                     b.Property<DateTime>("CreateDate")
                         .HasColumnType("datetime2");
 
@@ -219,10 +219,15 @@ namespace MumArchitecture.DataAccess.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("RoleId")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("UpdateDate")
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("RoleId");
 
                     b.ToTable("Methods");
                 });
@@ -531,6 +536,14 @@ namespace MumArchitecture.DataAccess.Migrations
                     b.Navigation("Parent");
                 });
 
+            modelBuilder.Entity("MumArchitecture.Domain.Entities.Method", b =>
+                {
+                    b.HasOne("MumArchitecture.Domain.Entities.Role", null)
+                        .WithMany("Methods")
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.NoAction);
+                });
+
             modelBuilder.Entity("MumArchitecture.Domain.Entities.RoleMethod", b =>
                 {
                     b.HasOne("MumArchitecture.Domain.Entities.Method", "Method")
@@ -540,7 +553,7 @@ namespace MumArchitecture.DataAccess.Migrations
                         .IsRequired();
 
                     b.HasOne("MumArchitecture.Domain.Entities.Role", "Role")
-                        .WithMany("Methods")
+                        .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();

@@ -1,6 +1,7 @@
 ﻿using MumArchitecture.Business.Result;
 using MumArchitecture.Domain.Dtos;
 using MumArchitecture.Domain.Entities;
+using MumArchitecture.Domain.Enums;
 using MumArchitecture.Domain.ListDtos;
 using System;
 using System.Collections.Generic;
@@ -20,8 +21,8 @@ namespace MumArchitecture.Business.Abstract
         public Task<SystemResult<MenuListDto>> Delete(int id);
         public Task<SystemResult<MenuListDto>> ChangeVisible(int id);
         public Task<SystemResult<MenuListDto>> ChangeActive(int id);
-        public Task<SystemResult<List<MenuListDto>>> GetByRoleId(int roleId);
-        public Task<SystemResult<List<MenuListDto>>> GetByUserId(int userId);
+        public Task<SystemResult<List<MenuListDto>>> GetByRoleId(int roleId,EArea area = EArea.Main);
+        public Task<SystemResult<List<MenuListDto>>> GetByUserId(int userId,EArea area=EArea.Main);
 
 
     }

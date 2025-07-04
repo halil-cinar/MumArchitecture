@@ -65,7 +65,7 @@ namespace MumArchitecture.Business.Services
         {
             get
             {
-                return !string.IsNullOrEmpty(AuthToken);
+                return AuthUserId!=null;
             }
         }
 
@@ -222,7 +222,7 @@ namespace MumArchitecture.Business.Services
                     Token = jwtToken,
                     IpAddress = _httpContextAccessor.HttpContext?.Connection.GetFullIpAddress(),
                     UserAgent = _httpContextAccessor.HttpContext?.Request?.Headers?["User-Agent"] ?? throw new UserException("YouMustUseABrowser"),
-                    UserId = 0,
+                    UserId = null,
                     ExpiresAt = DateTime.UtcNow.AddDays(1)
                 };
                 await _sessionRepository.Add(session);

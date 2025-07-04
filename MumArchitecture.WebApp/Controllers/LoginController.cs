@@ -20,8 +20,7 @@ namespace MumArchitecture.WebApp.Controllers
 
         public IActionResult Index()
         {
-            var token = _authenticationService.AuthToken;
-            if (!string.IsNullOrEmpty(token))
+            if(_authenticationService.IsLogin)
             {
                 return Redirect("/");
             }

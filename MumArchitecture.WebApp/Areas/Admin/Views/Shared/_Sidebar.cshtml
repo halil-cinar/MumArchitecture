@@ -6,7 +6,7 @@
 @{
     var userId = AuthenticationService.AuthUserId;
     var user = (await AuthenticationService.GetUser(AuthenticationService.AuthToken)).Data;
-    var menus = (await MenuService.GetByUserId(userId??0)).Data ?? new List<MenuListDto>();
+    var menus = (await MenuService.GetByUserId(userId??0,MumArchitecture.Domain.Enums.EArea.Admin)  ).Data ?? new List<MenuListDto>();
     var roots = menus.Where(m => m.ParentId == null || m.ParentId == 0)
                        .OrderBy(m => m.DisplayOrder)
                        .ToList();

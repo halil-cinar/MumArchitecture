@@ -10,7 +10,7 @@ namespace MumArchitecture.Domain.Dtos
         public string? Name { get; set; }
         public string? Description { get; set; }
         public string? Key { get; set; }
-
+        public List<int>? Methods { get; set; }
 
 
         public static implicit operator RoleListDto(Role? entity)
@@ -21,7 +21,8 @@ namespace MumArchitecture.Domain.Dtos
                 Id = entity.Id,
                 Name = entity.Name,
                 Description = entity.Description,
-                Key = entity.Key
+                Key = entity.Key,
+                Methods=entity.Methods?.Select(x=>x.MethodId)?.ToList(),
             };
         }
     }

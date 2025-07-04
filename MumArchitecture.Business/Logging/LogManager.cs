@@ -84,7 +84,14 @@ namespace MumArchitecture.Business.Logging
         {
             Config();
             Logger = NLog.LogManager.GetCurrentClassLogger();
-            Telegram = new TelegramNotify();
+            try
+            {
+                Telegram = new TelegramNotify();
+            }
+            catch
+            {
+
+            }
         }
 
         public static void LogException(UserException ex)
@@ -143,11 +150,11 @@ namespace MumArchitecture.Business.Logging
 
         public static void NotifyUs(string message)
         {
-            Telegram.SendMessage("Proje url: " + AppSettings.instance!.ApplicationUrl+"\n" + message).Wait();
+            Telegram.SendMessage("Proje url: " + AppSettings.instance!.ApplicationUrl + "\n" + message).Wait();
         }
         public static void NotifyUs(Exception ex)
         {
-            Telegram.SendMessage("Bir hata oluştu: \n Proje url: "+AppSettings.instance!.ApplicationUrl+"\n"+ex.Message+"    \n"+JsonSerializer.Serialize(ex)).Wait();
+            Telegram.SendMessage("Bir hata oluştu: \n Proje url: " + AppSettings.instance!.ApplicationUrl + "\n" + ex.Message + "    \n" + JsonSerializer.Serialize(ex)).Wait();
         }
 
     }

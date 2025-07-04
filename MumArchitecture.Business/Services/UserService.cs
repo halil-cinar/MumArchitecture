@@ -187,6 +187,11 @@ namespace MumArchitecture.Business.Services
                     var oldEntity = await Repository.Get(x => x.Id == entity.Id);
                     if (oldEntity == null)
                     {
+                        var exist = await Repository.Count(x => x.Email == entity.Email) > 0;
+                        if (exist)
+                        {
+                            throw new UserException(Lang.Value("EmailAlreadyExist"));
+                        }
                         entity.EmailVerified = false;
                         entity.IsActive = true;
                         entity.Key = Guid.NewGuid().ToString();

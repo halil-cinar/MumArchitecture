@@ -11,7 +11,7 @@ namespace MumArchitecture.Domain.Entities
     [Table("Session")]
     public class Session :Entity
     {
-        public int UserId { get; set; }
+        public int? UserId { get; set; }
         public string? Token { get; set; }
         public DateTime? ExpiresAt { get; set; }
         public string? IpAddress { get; set; }

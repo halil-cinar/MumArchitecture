@@ -1,10 +1,13 @@
-﻿using MumArchitecture.Domain;
+﻿using Microsoft.AspNetCore.Mvc;
+using MumArchitecture.Domain;
 using MumArchitecture.Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace MumArchitecture.Business.Result
@@ -63,7 +66,7 @@ namespace MumArchitecture.Business.Result
             });
         }
 
-        public virtual Microsoft.AspNetCore.Mvc.JsonResult ToJsonResult()
+        public virtual JsonResult ToJsonResult()
         {
             var result = new Microsoft.AspNetCore.Mvc.JsonResult(new
             {
@@ -76,15 +79,23 @@ namespace MumArchitecture.Business.Result
                 }),
                 Data = Data
             });
-            
+
             return result;
 
         }
-
+        public PaggingResult<T2> ToPaggingResult<T2>(Func<T?, List<T2>> func)
+        {
+            return new PaggingResult<T2>
+            {
+                Data = func(Data),
+                ItemCount = Data is IEnumerable<T2> enumerable ? enumerable.Count() : 0,
+                Messages = Messages,
+            };
+        }
     }
-
     public class StateMessage
     {
+        [JsonPropertyName("message")]
         public string? Message { get; set; }
         public EPriority Priority { get; set; }
     }

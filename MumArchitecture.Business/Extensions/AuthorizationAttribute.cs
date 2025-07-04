@@ -30,7 +30,6 @@ namespace MumArchitecture.Business.Extensions
         {
             try
             {
-                return;
                 var authorizationHeader = context.HttpContext.Request.Headers["Authorization"].FirstOrDefault();
                 if (string.IsNullOrEmpty(authorizationHeader))
                 {

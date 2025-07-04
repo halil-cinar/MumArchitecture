@@ -122,7 +122,7 @@ namespace MumArchitecture.Business.Services
 
             try
             {
-                var role = (await Repository.Get(x => x.Id == id)) ?? throw new Exception(Lang.Value("RecordNotFound"));
+                var role = (await Repository.Get(new Filter<Role>().AddFilter(x => x.Id == id).AddIncludes(x => x.Methods).ConvertDbQuery())) ?? throw new Exception(Lang.Value("RecordNotFound"));
                 result.Data = role;
             }
             catch (UserException ex)
@@ -292,15 +292,11 @@ namespace MumArchitecture.Business.Services
 
             try
             {
-                if (string.IsNullOrEmpty(dto.Name) || (dto.Id <= 0 && dto.methodIds?.Any() != true))
+                if ((dto.Id <= 0 && dto.methodIds?.Any() != true))
                 {
-                    throw new UserException(Lang.Value(Messages.RequiredIsNull));
+                    throw new UserException(Lang.Value("Methods is Required"));
                 }
-                // ESKİ YAZILAN SERVİCE 
-               // if (string.IsNullOrEmpty(dto.Name) || dto.methodIds?.Any() != true)
-                //{
-              //      throw new UserException(Lang.Value(Messages.RequiredIsNull));
-                //}
+                
                 var exist = await Repository.Count(x=>x.Name == dto.Name)>0;
                 if (exist && dto.Id<=0)
                 {

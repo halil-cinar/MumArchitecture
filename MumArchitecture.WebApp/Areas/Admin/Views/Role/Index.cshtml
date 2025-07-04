@@ -1,0 +1,37 @@
+﻿@{
+    ViewData["title"] = Lang.Value("Role");
+    ViewData["breadcreamp"] = string.Join("-", Lang.Value("Home"), Lang.Value("Role"));
+}
+
+<grid id="gridRoles" class="table table-hover" url="@Url.Action("Read", "Role", new { area = "Admin" })">
+    <filters>
+        <field for="Name" type="TEXT" lg-size="4" label="@Lang.Value("Name")" />
+        <field for="Key" type="TEXT" lg-size="4" label="@Lang.Value("Key")" />
+        <gridbutton icon="bi bi-plus"
+                    title="@Lang.Value("Add")"
+                    class="btn btn-info"
+                    modal="roleModal"></gridbutton>
+    </filters>
+
+    <column for="Id" title="@Lang.Value("Id")" style="width:4rem;" />
+    <column for="Name" title="@Lang.Value("Name")" />
+    <column for="Description" title="@Lang.Value("Description")" />
+    <column for="Key" title="@Lang.Value("Key")" />
+
+    <rowbutton icon="bi bi-eye"
+               title="@Lang.Value("Edit")"
+               class="btn btn-info"
+               modal="roleModal" />
+
+    <rowbutton icon="bi bi-trash"
+               title="@Lang.Value("Delete")"
+               class="btn btn-danger"
+               url="@Url.Action("Delete", "Role", new { id = "[id]" })" />
+</grid>
+
+<addupdatemodal id="roleModal" title="@Lang.Value("RoleEdit")" get-url="@Url.Action("Get", "Role", new { area = "Admin" })" url="@Url.Action("Save", "Role", new { area = "Admin" })" size="lg">
+    <input-box name="Name" label="@Lang.Value("Name")" required="true" />
+    <input-box name="Description" label="@Lang.Value("Description")" />
+    <input-box name="Id" type="HIDDEN" />
+    <input-box name="Methods" type="SELECT" multiple="true" link="@Url.Action("ReadMethod", "Role", new { area = "Admin", format = "select" })" />
+</addupdatemodal>

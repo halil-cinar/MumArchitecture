@@ -54,20 +54,32 @@
     }
 
     function populateFields(data) {
-        // her [name] input/select/textarea alanına tek tek değer ata
         $.each(data, (key, val) => {
-            key = key[0].toUpperCase() + key.substring(1)
-            console.log(key)    
+            key = key[0].toUpperCase() + key.slice(1);
+            console.log(key,val)
             const $field = config.form.find(`[name="${key}"]`);
             if (!$field.length) return;
 
             if ($field.is('select')) {
-                $field.val(val).trigger('change');
-            }
-            else if ($field.is(':checkbox, :radio')) {
+                const isMultiple = $field.prop('multiple');
+
+                if (isMultiple && !Array.isArray(val))
+                    val = String(val).split(',').map(v => v.trim()).filter(Boolean);
+                else if (!isMultiple && Array.isArray(val))
+                    val = val[0] ?? null;
+
+                if ($field.data('select2')) {
+                    val.forEach(v => {
+                        if (!$field.find(`option[value="${v}"]`).length)
+                            $field.append(new Option(v, v, false, false));
+                    });
+                    $field.val(val).trigger('change.select2');
+                } else {
+                    $field.val(val).trigger('change');
+                }
+            } else if ($field.is(':checkbox, :radio')) {
                 $field.prop('checked', Boolean(val));
-            }
-            else {
+            } else {
                 $field.val(val);
             }
         });
@@ -80,6 +92,7 @@
 
     function saveData() {
         const formData = new FormData(config.form[0]);
+        console.log(formData)
         $.ajax({
             url: config.saveUrl,
             method: 'POST',
@@ -107,6 +120,7 @@
 
     function onSaveError(xhr) {
         // örnek: validation hatalarını form altında göster
+        
         let errors = xhr.responseJSON || {};
         console.error('Kaydetme hatası:', errors);
         displayValidationErrors(errors);
@@ -116,12 +130,13 @@
         // önce eski mesajları temizle
         config.form.find('.is-invalid').removeClass('is-invalid');
         config.form.find('.invalid-feedback').remove();
+        config.form.find('.alert').remove();
 
         if (Array.isArray(errors)) {
             // Handle SystemResult messages
             errors.forEach(message => {
                 const $feedback = $('<div>').addClass('alert alert-danger')
-                    .text(message.Message);
+                    .text(message.message);
                 config.form.prepend($feedback);
             });
             return;

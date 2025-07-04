@@ -1,5 +1,6 @@
 ﻿using MumArchitecture.Domain.Abstract;
 using MumArchitecture.Domain.Entities;
+using MumArchitecture.Domain.Enums;
 using MumArchitecture.Domain.Validation;
 using System;
 using System.Collections.Generic;
@@ -26,8 +27,8 @@ namespace MumArchitecture.Domain.Dtos
         public int DisplayOrder { get; set; } = 0;
         public bool IsActive { get; set; } = true;
         public bool IsVisible { get; set; } = true;
-        public List<int> MenuIds { get; set; }=new List<int>();
-
+        public List<int> RoleIds { get; set; }=new List<int>();
+        public EArea Area { get; set; }
 
         public static implicit operator MenuDto(Menu entity)
         {
@@ -45,7 +46,8 @@ namespace MumArchitecture.Domain.Dtos
                 ParentId = entity.ParentId,
                 IsActive = entity.IsActive,
                 IsVisible = entity.IsVisible,
-                MenuIds=JsonSerializer.Deserialize<List<int>>(entity.RoleIds) ?? new List<int>()
+                Area=entity.Area,
+                RoleIds = JsonSerializer.Deserialize<List<int>>(entity.RoleIds) ?? new List<int>()
             };
         }
 
@@ -65,7 +67,8 @@ namespace MumArchitecture.Domain.Dtos
                 ParentId = dto.ParentId,
                 IsActive = dto.IsActive,
                 IsVisible = dto.IsVisible,
-                RoleIds = JsonSerializer.Serialize(dto.MenuIds) ?? "[]"
+                Area=dto.Area,
+                RoleIds = JsonSerializer.Serialize(dto.RoleIds) ?? "[]"
             };
         }
     }

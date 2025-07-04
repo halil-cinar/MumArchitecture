@@ -12,8 +12,7 @@ namespace MumArchitecture.Domain.Dtos
     {
         public int Id { get; set; }
 
-        [LocalizedRequired]
-        public int UserId { get; set; }
+        public int?  UserId { get; set; }
 
         [LocalizedRequired, LocalizedMaxLength(4000), Sanitize]
         public string? Token { get; set; }

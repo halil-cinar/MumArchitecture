@@ -28,7 +28,7 @@
         var form = document.getElementById(cfg.id + 'FilterForm');
         var params = new URLSearchParams(new FormData(form));
         params.set('page', cfg.currentPage);
-
+        
         fetch(cfg.url + '?' + params)
             .then(res => {
                 if (!res.ok) {
@@ -116,18 +116,19 @@
 
     // Sayfalamayı çizme
     function renderPagination(cfg, totalPages) {
+        console.log(totalPages)
         var $pag = cfg.$pagination;
         $pag.innerHTML = '';
-        for (let i = 1; i <= totalPages; i++) {
+        for (let i = 0; i <= totalPages; i++) {
             var li = document.createElement('li');
             li.className = 'page-item' + (i === cfg.currentPage ? ' active' : '');
             var a = document.createElement('a');
             a.className = 'page-link';
             a.href = '#';
-            a.textContent = i;
+            a.textContent = i+1;
             a.addEventListener('click', function (e) {
                 e.preventDefault();
-                goToPage(cfg.id, i-1);
+                goToPage(cfg.id, i);
             });
             li.appendChild(a);
             $pag.appendChild(li);

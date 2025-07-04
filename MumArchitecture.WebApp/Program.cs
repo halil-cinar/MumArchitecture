@@ -1,3 +1,4 @@
+using AspNetCoreRateLimit;
 using MumArchitecture.Business.Abstract;
 using MumArchitecture.Business.Extensions;
 using MumArchitecture.Business.Middleware;
@@ -24,6 +25,13 @@ var appSettings = new AppSettings();
 builder.Configuration.Bind(appSettings);
 appSettings.serviceProvider = builder.Services.BuildServiceProvider();
 AppSettings.Initialize(appSettings);
+
+builder.Services.Configure<IpRateLimitOptions>(
+    builder.Configuration.GetSection("IpRateLimiting"));
+builder.Services.AddSingleton<IIpPolicyStore, MemoryCacheIpPolicyStore>();
+builder.Services.AddSingleton<IRateLimitCounterStore, MemoryCacheRateLimitCounterStore>();
+builder.Services.AddInMemoryRateLimiting();
+builder.Services.AddSingleton<IRateLimitConfiguration, RateLimitConfiguration>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -36,13 +44,14 @@ if (!app.Environment.IsDevelopment())
 app.UseMiddleware<CultureMiddleware>();
 app.UseMiddleware<RequestLogMiddleware>();
 app.UseMiddleware<SecurityMiddleware>();
-app.UseMiddleware<SessionMiddleware>();
-app.UseMiddleware<ValidationMiddleware>();
+//app.UseMiddleware<SessionMiddleware>();
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
+app.UseMiddleware<ValidationMiddleware>();
 app.UseMiddleware<CachingMiddleware>();
 app.UseAuthorization();
+app.UseIpRateLimiting();
 
 app.MapControllerRoute(
     name: "areas",

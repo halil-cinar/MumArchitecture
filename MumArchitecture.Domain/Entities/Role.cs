@@ -12,5 +12,7 @@ namespace MumArchitecture.Domain.Entities
         public string? Name { get; set; }
         public string? Description { get; set; }
         public string? Key { get; set; }
+
+        public virtual ICollection<RoleMethod>? Methods { get; set; }
     }
 }

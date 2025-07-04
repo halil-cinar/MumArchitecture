@@ -1,0 +1,62 @@
+﻿@{
+    ViewData["title"] = Lang.Value("Menu");
+    ViewData["breadcreamp"] = string.Join("-", Lang.Value("Home"), Lang.Value("Menu"));
+}
+
+<grid id="gridMenus" class="table table-hover" url="@Url.Action("Read", "Menu",new { area = "Admin" })">
+    <filters>
+        <field for="Name" type="TEXT" lg-size="3" label="@Lang.Value("Name")" />
+        <field for="Url" type="TEXT" lg-size="3" label="@Lang.Value("Url")" />
+        <field for="ParentId" type="SELECT" lg-size="3" label="@Lang.Value("Parent")" link="@Url.Action("Read", "Menu", new { area = "Admin", format = "select" })"/>
+        <field for="IsActive" type="SELECT" lg-size="3" label="@Lang.Value("IsActive")"
+               items="@(new[] {
+                                                  new SelectListItem { Value = "", Text = Lang.Value("All") },
+                                                  new SelectListItem { Value = "true", Text = Lang.Value("Yes") },
+                                                  new SelectListItem { Value = "false", Text = Lang.Value("No") } })" />
+        <field for="IsVisible" type="SELECT" lg-size="3" label="@Lang.Value("IsVisible")"
+               items="@(new[] {
+                                                  new SelectListItem { Value = "", Text = Lang.Value("All") },
+                                                  new SelectListItem { Value = "true", Text = Lang.Value("Yes") },
+                                                  new SelectListItem { Value = "false", Text = Lang.Value("No") } })" />
+
+        <gridbutton icon="bi bi-plus"
+                    title="@Lang.Value("Add")"
+                    class="btn btn-info"
+                    modal="menuModal"></gridbutton>
+    </filters>
+
+    <column for="Id" title="@Lang.Value("Id")" style="width:4rem;" />
+    <column for="Name" title="@Lang.Value("Name")" />
+    <column for="Description" title="@Lang.Value("Description")" />
+    <column for="Url" title="@Lang.Value("Url")" />
+    <column for="Icon" title="@Lang.Value("Icon")" />
+    <column for="ParentName" title="@Lang.Value("Parent")" />
+    <column for="DisplayOrder" title="@Lang.Value("DisplayOrder")" />
+    <column for="IsActive" title="@Lang.Value("IsActive")" />
+    <column for="IsVisible" title="@Lang.Value("IsVisible")" />
+
+    <rowbutton icon="bi bi-eye"
+               title="@Lang.Value("Edit")"
+               class="btn btn-info"
+               modal="menuModal" />
+
+    <rowbutton icon="bi bi-trash"
+               title="@Lang.Value("Delete")"
+               class="btn btn-danger"
+               url="@Url.Action("Delete", "Menu", new { id = "[id]" })" />
+</grid>
+
+<addupdatemodal id="menuModal" title="@Lang.Value("MenuEdit")" get-url="@Url.Action("Get", "Menu",new { area = "Admin" })" url="@Url.Action("Save", "Menu",new { area = "Admin" })" size="xl">
+    <input-box name="Name" label="@Lang.Value("Name")" required="true" />
+    <input-box name="Description" label="@Lang.Value("Description")" />
+    <input-box name="Url" label="@Lang.Value("Url")" />
+    <input-box name="Icon" label="@Lang.Value("Icon")" />
+    <input-box name="ParentId" label="@Lang.Value("Parent")" type="SELECT"
+               link="@Url.Action("Read", "Menu", new { area = "Admin", format = "select" })" />
+    <input-box name="DisplayOrder" label="@Lang.Value("DisplayOrder")" type="NUMBER" value="0" />
+    <input-box name="IsActive" label="@Lang.Value("IsActive")" type="CHECKBOX" />
+    <input-box name="IsVisible" label="@Lang.Value("IsVisible")" type="CHECKBOX" />
+    <input-box name="RoleIds" label="@Lang.Value("RoleIds")" type="SELECT" multiple="true" link="@Url.Action("Read", "Role", new { area = "Admin", format = "select" })" multiple="true" />
+
+    <input-box name="Id" type="HIDDEN" />
+</addupdatemodal>

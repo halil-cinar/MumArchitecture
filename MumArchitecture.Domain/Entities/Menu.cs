@@ -1,4 +1,5 @@
 ﻿using MumArchitecture.Domain.Abstract;
+using MumArchitecture.Domain.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,6 +19,7 @@ namespace MumArchitecture.Domain.Entities
         public bool IsActive { get; set; } = true;
         public bool IsVisible { get; set; } = true;
         public string RoleIds { get; set; } = "[]";//int array
+        public EArea Area { get; set; }
         public virtual Menu? Parent { get; set; }
         public virtual ICollection<Menu> Children { get; set; } = new List<Menu>();
     }

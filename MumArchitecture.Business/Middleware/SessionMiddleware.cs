@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.DependencyInjection;
 using MumArchitecture.Business.Abstract;
+using MumArchitecture.Domain;
 using MumArchitecture.Domain.Entities;
 using System;
 using System.Collections.Generic;
@@ -14,10 +16,10 @@ namespace MumArchitecture.Business.Middleware
         private readonly RequestDelegate _next;
         private readonly IAuthenticationService _authenticationService;
 
-        public SessionMiddleware(RequestDelegate next, IAuthenticationService authenticationService)
+        public SessionMiddleware(RequestDelegate next)
         {
             _next = next;
-            _authenticationService = authenticationService;
+            _authenticationService = AppSettings.instance!.serviceProvider!.GetRequiredService<IAuthenticationService>();
         }
 
         public async Task InvokeAsync(HttpContext context)

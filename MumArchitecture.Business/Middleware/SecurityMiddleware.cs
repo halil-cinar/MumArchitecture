@@ -39,7 +39,7 @@ namespace MumArchitecture.Business.Middleware
             {
                 context.Response.StatusCode = StatusCodes.Status403Forbidden;
                 await context.Response.WriteAsync("Geçersiz kaynak (origin/referer).");
-                return;
+                return; 
             }
             await _next(context);
         }

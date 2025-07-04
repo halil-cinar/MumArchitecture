@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Razor.TagHelpers;
+using Microsoft.VisualStudio.Services.WebApi;
+using MumArchitecture.Domain;
 using System.Text;
 
 namespace MumArchitecture.Web.TagHelpers
@@ -15,6 +17,7 @@ namespace MumArchitecture.Web.TagHelpers
         [HtmlAttributeName("items")]
         public IEnumerable<SelectListItem> Items { get; set; }
         public string Value { get; set; } = "";
+        public string? Link { get; set; } = null;
 
         public override void Process(TagHelperContext context, TagHelperOutput output)
         {
@@ -28,7 +31,9 @@ namespace MumArchitecture.Web.TagHelpers
             {
                 case "SELECT":
                     input = $"<select class=\"form-select\" id=\"{id}\" asp-items=\"{Items}\" name=\"{id}\"><option selected>Seçiniz</option>";
-                    foreach(var item in Items??Enumerable.Empty<SelectListItem>())
+                    input+=($"<option selected  value=\"\">{Lang.Value("Select")}</option>");
+
+                    foreach (var item in Items??Enumerable.Empty<SelectListItem>())
                     {
                         if (Value == item.Value)
                         {
@@ -42,6 +47,25 @@ namespace MumArchitecture.Web.TagHelpers
                     }
                         
                     input+="</select>";
+                    input+=($@"
+    <script>
+        $.getJSON('{Link}', null)
+            .done((data) => {{
+                if (!data.success) {{
+                    throw new Error(
+                        (data.messages ?? data.Messages)?.map(m => m.Message ?? m.message).join(', ') || 'Bir hata oluştu'
+                    );
+                }}
+
+                const $select = $('#{id}');
+                $select.find('option:not([value])').remove();
+                $.each(data.data, (val, text) => {{
+                    $select.append(new Option(text, val));
+                }});
+            }})
+            .fail((_, status, err) => console.error('Veri çekme hatası:', status, err));
+    </script>
+");
                     break;
                 case "DATE":
                     input = $"<input type=\"date\" class=\"form-control\" placeholder=\"{label}\" id=\"{id}\" name=\"{id}\">";

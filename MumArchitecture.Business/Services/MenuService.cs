@@ -7,6 +7,7 @@ using MumArchitecture.Business.Result;
 using MumArchitecture.Domain;
 using MumArchitecture.Domain.Dtos;
 using MumArchitecture.Domain.Entities;
+using MumArchitecture.Domain.Enums;
 using MumArchitecture.Domain.ListDtos;
 using NLog.Filters;
 using System;
@@ -221,12 +222,12 @@ namespace MumArchitecture.Business.Services
         }
 
 
-        public Task<SystemResult<List<MenuListDto>>> GetByRoleId(int roleId)
+        public Task<SystemResult<List<MenuListDto>>> GetByRoleId(int roleId,EArea area = EArea.Main)
         {
-            return GetAllTree(Filter<Menu>.CreateFilter(x => x.RoleIds.Contains(roleId.ToString())).AddIncludes(x => x.Parent, x => x.Children));
+            return GetAllTree(Filter<Menu>.CreateFilter(x => x.RoleIds.Contains(roleId.ToString()),x=>x.Area==area).AddIncludes(x => x.Parent, x => x.Children));
         }
 
-        public Task<SystemResult<List<MenuListDto>>> GetByUserId(int userId)
+        public Task<SystemResult<List<MenuListDto>>> GetByUserId(int userId, EArea area = EArea.Main)
         {
             var roleIds = _roleService.GetUserRoles(userId)?.Result?.Data?.Select(x=>x.Id)?.ToList() ?? new List<int>();
 
@@ -234,8 +235,8 @@ namespace MumArchitecture.Business.Services
                 return Task.FromResult(new SystemResult<List<MenuListDto>>());
 
             var filter = Filter<Menu>
-                .CreateFilter(m => roleIds.Any(rid => m.RoleIds.Contains(rid.ToString())))
-                .AddIncludes(m => m.Parent, m => m.Children);
+                .CreateFilter(m => roleIds.Any(rid => m.RoleIds.Contains(rid.ToString())),x=>x.Area==area)
+                ;//.AddIncludes( m => m.Children);
 
             return GetAllTree(filter);
         }
