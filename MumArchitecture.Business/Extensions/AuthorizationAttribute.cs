@@ -46,6 +46,10 @@ namespace MumArchitecture.Business.Extensions
                         return;
                     }
                     var methods = task.Result.Data;
+                    if (methods?.Count > 0 && _methodName == "*")
+                    {
+                        return;
+                    }
                     if (methods == null || !methods.Any(m => m.Name == _methodName))
                     {
                         context.Result = new UnauthorizedResult();

@@ -46,7 +46,7 @@
     };
 
     var translations = {};
-    mum.loadLocalization = function (basePath) {
+    mum.loadLocalization = function (basePath="") {
         var lang = navigator.language || navigator.userLanguage || "en";
         return $.getScript(basePath + "/" + lang + "/localization.js").done(function () {
             if (typeof localization !== "undefined") {
@@ -58,6 +58,7 @@
     mum.t = function (key) {
         return translations[key] || key;
     };
+    
 
     mum.notify = function (type, message, opts) {
         if (typeof toastr !== "undefined") {

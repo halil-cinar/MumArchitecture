@@ -11,7 +11,7 @@ namespace MumArchitecture.Domain.Validation
     {
         public LocalizedMinLengthAttribute(int length) : base(length)
         {
-            ErrorMessage = Lang.Value("The miniMumArchitecture character limit of {0} is {1}.") ?? ErrorMessage;
+            ErrorMessage = Lang.Value("The minimum character limit of {0} is {1}.") ?? ErrorMessage;
             
         }
         public override string FormatErrorMessage(string name)

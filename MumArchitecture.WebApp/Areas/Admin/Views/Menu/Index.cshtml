@@ -23,6 +23,10 @@
                     title="@Lang.Value("Add")"
                     class="btn btn-info"
                     modal="menuModal"></gridbutton>
+        <gridbutton icon="bi bi-plus"
+                    title="@Lang.Value("Excel İşlemleri")"
+                    class="btn btn-info"
+                    modal="excelModal1"></gridbutton>
     </filters>
 
     <column for="Id" title="@Lang.Value("Id")" style="width:4rem;" />
@@ -60,3 +64,9 @@
 
     <input-box name="Id" type="HIDDEN" />
 </addupdatemodal>
+
+<excel-modal download-url="@Url.Action("DownloadExcel", "Menu", new { area = "Admin", sample = false })"
+             upload-url="@Url.Action("LoadExcel", "Menu", new { area = "Admin" })"
+             sample-url="@Url.Action("DownloadExcel", "Menu", new { area = "Admin", sample = true })"
+             modal-id="excelModal1">
+</excel-modal>

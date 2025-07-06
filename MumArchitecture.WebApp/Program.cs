@@ -18,7 +18,7 @@ builder.Services.AddScoped(typeof(IRepository<>), typeof(EfGenericRepositoryBase
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddDbContext<DatabaseContext>();
 // Add services to the container.
-builder.Services.AddControllersWithViews();
+builder.Services.AddControllersWithViews().AddNToastNotifyToastr();
 builder.Services.AddMemoryCache();
 
 var appSettings = new AppSettings();
@@ -52,6 +52,7 @@ app.UseMiddleware<ValidationMiddleware>();
 app.UseMiddleware<CachingMiddleware>();
 app.UseAuthorization();
 app.UseIpRateLimiting();
+app.UseNToastNotify();
 
 app.MapControllerRoute(
     name: "areas",

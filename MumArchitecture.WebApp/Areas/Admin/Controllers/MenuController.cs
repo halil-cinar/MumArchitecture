@@ -54,11 +54,24 @@ namespace MumArchitecture.WebApp.Areas.Admin.Controllers
             var result = await _menuService.ChangeActive(id);
             return View("Index");
         }
-        public async Task<IActionResult> DownloadExcel()
+        public async Task<IActionResult> DownloadExcel(bool sample = false)
         {
-            var result = await _excelDataService.DownloadExcel<Menu, MenuListDto>(Filter<Menu>.CreateFilter(), x => x, false);
+            if (sample)
+            {
+                var result2 = await _excelDataService.DownloadSampleExcel<Menu, MenuDto>(Filter<Menu>.CreateFilter(), x => x);
+                return File(result2.Data.File, result2.Data.ContentType, result2.Data.Name);
+            }
+            var result = await _excelDataService.DownloadExcel<Menu, MenuListDto>(Filter<Menu>.CreateFilter().All(), x => x);
             return File(result.Data.File, result.Data.ContentType, result.Data.Name);
         }
+        public async Task<IActionResult> LoadExcel(IFormFile file)
+        {
+            var result = await _excelDataService.UploadExcel<Menu, MenuDto, MenuListDto, IMenuService>(
+                x => (Menu)x,
+                async x => await _menuService.Save(x),
+                file);
+            return result.ToJsonResult();
 
+        }
     }
 }

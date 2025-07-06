@@ -26,6 +26,7 @@ namespace MumArchitecture.Domain.Validation
 
             try
             {
+                
                 double number = Convert.ToDouble(value);
 
                 if (number < MiniMumArchitecture || number > MaxiMumArchitecture)
@@ -43,7 +44,12 @@ namespace MumArchitecture.Domain.Validation
 
         public string GetErrorMessage()
         {
-            return string.Format(Lang.Value("The value must be between {0} and {1}."), MiniMumArchitecture, MaxiMumArchitecture);
+            return string.Format(Lang.Value("{2} value must be between {0} and {1}."), MiniMumArchitecture, MaxiMumArchitecture,ErrorMessageResourceName);
+        }
+
+        public override string FormatErrorMessage(string name)
+        {
+            return ErrorMessageString.Replace("XYZ", Lang.Value(name), StringComparison.OrdinalIgnoreCase);
         }
     }
 }
