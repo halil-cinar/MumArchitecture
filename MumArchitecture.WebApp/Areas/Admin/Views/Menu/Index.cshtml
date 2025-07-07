@@ -10,15 +10,14 @@
         <field for="ParentId" type="SELECT" lg-size="3" label="@Lang.Value("Parent")" link="@Url.Action("Read", "Menu", new { area = "Admin", format = "select" })"/>
         <field for="IsActive" type="SELECT" lg-size="3" label="@Lang.Value("IsActive")"
                items="@(new[] {
-                                                  new SelectListItem { Value = "", Text = Lang.Value("All") },
-                                                  new SelectListItem { Value = "true", Text = Lang.Value("Yes") },
-                                                  new SelectListItem { Value = "false", Text = Lang.Value("No") } })" />
+                            new SelectListItem { Value = "", Text = Lang.Value("All") },
+                            new SelectListItem { Value = "true", Text = Lang.Value("Yes") },
+                            new SelectListItem { Value = "false", Text = Lang.Value("No") } })" />
         <field for="IsVisible" type="SELECT" lg-size="3" label="@Lang.Value("IsVisible")"
                items="@(new[] {
-                                                  new SelectListItem { Value = "", Text = Lang.Value("All") },
-                                                  new SelectListItem { Value = "true", Text = Lang.Value("Yes") },
-                                                  new SelectListItem { Value = "false", Text = Lang.Value("No") } })" />
-
+                            new SelectListItem { Value = "", Text = Lang.Value("All") },
+                            new SelectListItem { Value = "true", Text = Lang.Value("Yes") },
+                            new SelectListItem { Value = "false", Text = Lang.Value("No") } })" />
         <gridbutton icon="bi bi-plus"
                     title="@Lang.Value("Add")"
                     class="btn btn-info"
