@@ -9,6 +9,7 @@ using MumArchitecture.Domain;
 using MumArchitecture.Business.Abstract;
 using MumArchitecture.Domain.Abstract;
 using System.Web.Http;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 
 namespace MumArchitecture.WebApp
@@ -135,6 +136,30 @@ namespace MumArchitecture.WebApp
             result.ContentType = "application/json";
             return result;
         }
+
+        public static List<SelectListItem> EnumToSelect<TEnum>(this RazorPage page)
+            where TEnum: System.Enum
+        {
+            var values= Enum.GetValues(typeof(TEnum)).Cast<TEnum>();
+            var selectList = values.Select(value => new SelectListItem
+            {
+                Value = value.ToString(),
+                Text = value.ToString()
+            }).ToList();
+            return selectList;
+        }
+        public static List<SelectListItem> EnumToSelect<TEnum>(this Enum @enum)
+            where TEnum: System.Enum
+        {
+            var values= Enum.GetValues(typeof(TEnum)).Cast<TEnum>();
+            var selectList = values.Select(value => new SelectListItem
+            {
+                Value = value.ToString(),
+                Text = value.ToString()
+            }).ToList();
+            return selectList;
+        }
+
         
     }
 }
