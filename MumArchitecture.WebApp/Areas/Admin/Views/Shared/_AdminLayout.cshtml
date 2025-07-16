@@ -28,8 +28,52 @@
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-    <script src="~/js/addupdatemodal.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 
+    <script src="~/js/addupdatemodal.js"></script>
+    <style>
+        /* site.css */
+        .form-columns {
+            column-gap: 1rem;
+        }
+
+            .form-columns .column-item {
+                break-inside: avoid;
+                width: 100%;
+            }
+
+        @@media(max-width:768px) {
+            .form-columns {
+                column-count: 1 !important;
+            }
+        }
+
+        .select2-selection {
+            min-height: 59px !important;
+            display: flex !important;
+            /* flex-direction: row; */
+            align-items: end !important;
+        }
+
+        .file-drop-zone {
+            min-height: 140px;
+            cursor: pointer
+        }
+
+            .file-drop-zone.drag {
+                background: #f0f8ff
+            }
+
+            .file-drop-zone .file-preview {
+                max-width: 100px;
+                max-height: 100px;
+                object-fit: cover;
+                border: 1px solid #dee2e6;
+                border-radius: .25rem
+            }
+
+    </style>
 </head>
 <body class="hold-transition sidebar-mini layout-navbar-fixed">
     <!-- Site wrapper -->
@@ -246,7 +290,7 @@
     <script src="https://unpkg.com/filepond/dist/filepond.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/filepond-plugin-media-preview@1.0.11/dist/filepond-plugin-media-preview.min.js"></script>
     <script src="https://unpkg.com/filepond-plugin-pdf-preview/dist/filepond-plugin-pdf-preview.min.js"></script>
-
+    <script src="~/js/chart.js"></script>
     <script>
         FilePond.registerPlugin(FilePondPluginImageExifOrientation);
         FilePond.registerPlugin(FilePondPluginImagePreview);
@@ -256,54 +300,15 @@
 
 
     </script>
+    <script src="~/js/mum.js"></script>
     <script src="~/js/form.js"></script>
+    <script src="~/js/ajax-json-form.js"></script>
     <!-- AdminLTE App -->
     <script src="/admin/dist/js/adminlte.min.js"></script>
     <!-- AdminLTE for demo purposes -->
     <script src="/admin/dist/js/demo.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
-    <style>
-        /* site.css */
-        .form-columns {
-            column-gap: 1rem;
-        }
-
-            .form-columns .column-item {
-                break-inside: avoid;
-                width: 100%;
-            }
-
-        @@media(max-width:768px) {
-            .form-columns {
-                column-count: 1 !important;
-            }
-        }
-
-        .select2-selection {
-            min-height: 59px !important;
-            display: flex !important;
-            /* flex-direction: row; */
-            align-items: end !important;
-        }
-
-        .file-drop-zone {
-            min-height: 140px;
-            cursor: pointer
-        }
-
-            .file-drop-zone.drag {
-                background: #f0f8ff
-            }
-
-            .file-drop-zone .file-preview {
-                max-width: 100px;
-                max-height: 100px;
-                object-fit: cover;
-                border: 1px solid #dee2e6;
-                border-radius: .25rem
-            }
-
-    </style>
+  
     <script>
         $(document).ready(function() {
             $('.js-example-basic-single').select2({
@@ -322,6 +327,49 @@
             $(".calendar").flatpickr({});
 
         });
+    </script>
+    <script>
+        (function () {
+            const uploadUrl = '/Media';
+
+            function sendFile(file, $editor, insert) {
+                const data = new FormData();
+                data.append('file', file);
+                $.ajax({
+                    url: uploadUrl,
+                    type: 'POST',
+                    data: data,
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                    success: res => {
+                        if (res.isSuccess && res.data && res.data.url) {
+                            insert(res.data.url);
+                        }
+                    }
+                });
+            }
+
+            $('.summernote').summernote({
+                callbacks: {
+                    onImageUpload(files) {
+                        const $ed = $(this);
+                        [...files].forEach(f => sendFile(f, $ed, url => $ed.summernote('insertImage', url)));
+                    },
+                    onFileUpload(files) {
+                        const $ed = $(this);
+                        [...files].forEach(f => sendFile(f, $ed, url => {
+                            const tag = `<video controls src="${url}" style="max-width:100%"></video>`;
+                            $ed.summernote('pasteHTML', tag);
+                        }));
+                    },
+                    onMediaDelete(target) {
+                        const src = target.attr('src');
+                        if (src) { $.ajax({ url: src, type: 'DELETE' }); }
+                    }
+                }
+            });
+        })();
     </script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>

@@ -1,0 +1,21 @@
+﻿@using MumArchitecture.Domain.Entities
+@using MumArchitecture.Domain.ListDtos
+@model SettingListDto
+
+@foreach (var item in Model.SettingType)
+{
+    if (item.Type == MumArchitecture.Domain.Enums.ESetting.ARRAY)
+    {
+        <array-input name="@item.Name" label="@Lang.Value(item.Name)">
+            @await Html.PartialAsync("_SettingInputs", item?.ElementType ?? Enumerable.Empty<SettingType>())
+        </array-input>
+    }
+    else if (item.Type == MumArchitecture.Domain.Enums.ESetting.NUMBER)
+    {
+        <form-input name="@item.Name" label="@Lang.Value(item.Name)" type="int" required="true" />
+    }
+    else
+    {
+        <form-input name="@item.Name" label="@Lang.Value(item.Name)" type="@item.Type.ToString()" required="true" />
+    }
+}

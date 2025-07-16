@@ -35,9 +35,29 @@ namespace MumArchitecture.DataAccess.Repository.EntityFramework
             "Update",
             "Delete",
         };
-        private static DatabaseContext context = new DatabaseContext(new DbContextOptionsBuilder<DatabaseContext>()
-            .UseSqlServer(AppSettings.instance!.ConnectionStrings!.DefaultConnection)
-            .Options);
+        private static DbContextOptions<DatabaseContext> options
+        {
+            get
+            {
+                var sqltype = AppSettings.instance?.ConnectionStrings?.SqlType ?? "mssql";
+                if (sqltype == "mssql")
+                {
+                    return new DbContextOptionsBuilder<DatabaseContext>()
+                        .UseSqlServer(AppSettings.instance!.ConnectionStrings!.DefaultConnection)
+                        .Options;
+                }
+                if (sqltype == "postgre")
+                {
+                    return new DbContextOptionsBuilder<DatabaseContext>()
+                        .UseNpgsql(AppSettings.instance!.ConnectionStrings!.PostgreSQLConnection)
+                        .Options;
+                }
+                return new DbContextOptionsBuilder<DatabaseContext>()
+                        .UseSqlServer(AppSettings.instance!.ConnectionStrings!.DefaultConnection)
+                        .Options;
+            }
+        }
+        private static DatabaseContext context = new DatabaseContext(options);
 
         public static void CreateDB()
         {
@@ -131,22 +151,22 @@ namespace MumArchitecture.DataAccess.Repository.EntityFramework
                 context.SaveChanges();
 
                 // Create Settings
-                var settings = new[]
-                {
-                        new Setting { Key = "SiteTitle", Value = "Real Estate Management System", CreateDate = DateTime.UtcNow, IsDeleted = false,SettingType=ESetting.TEXT },
-                        new Setting { Key = "SiteDescription", Value = "Professional Real Estate Management Solution", CreateDate = DateTime.UtcNow, IsDeleted = false , SettingType = ESetting.TEXT},
-                        new Setting { Key = "ContactEmail", Value = "contact@example.com", CreateDate = DateTime.UtcNow, IsDeleted = false,SettingType = ESetting.TEXT },
-                        new Setting { Key = "ContactPhone", Value = "+90 555 555 5555", CreateDate = DateTime.UtcNow, IsDeleted = false ,SettingType = ESetting.TEXT},
-                        new Setting { Key = "SmtpSenderMail",     Value = "no-reply@yourdomain.com", CreateDate = DateTime.UtcNow, IsDeleted = false, SettingType = ESetting.TEXT },
-                        new Setting { Key = "SmtpSenderPassword", Value = "your_smtp_password",      CreateDate = DateTime.UtcNow, IsDeleted = false, SettingType = ESetting.TEXT },
-                        new Setting { Key = "SmtpSmtpMail",       Value = "smtp@yourdomain.com",     CreateDate = DateTime.UtcNow, IsDeleted = false, SettingType = ESetting.TEXT },
-                        new Setting { Key = "SmtpSmtpPort",       Value = "587",                     CreateDate = DateTime.UtcNow, IsDeleted = false, SettingType = ESetting.TEXT },
-                        new Setting { Key = "SmtpSmtpServer",     Value = "smtp.yourdomain.com",     CreateDate = DateTime.UtcNow, IsDeleted = false, SettingType = ESetting.TEXT }
+                //var settings = new[]
+                //{
+                //        //new Setting { Key = "SiteTitle", Value = "Real Estate Management System", CreateDate = DateTime.UtcNow, IsDeleted = false,SettingType=ESetting.TEXT },
+                //        //new Setting { Key = "SiteDescription", Value = "Professional Real Estate Management Solution", CreateDate = DateTime.UtcNow, IsDeleted = false , SettingType = ESetting.TEXT},
+                //        //new Setting { Key = "ContactEmail", Value = "contact@example.com", CreateDate = DateTime.UtcNow, IsDeleted = false,SettingType = ESetting.TEXT },
+                //        //new Setting { Key = "ContactPhone", Value = "+90 555 555 5555", CreateDate = DateTime.UtcNow, IsDeleted = false ,SettingType = ESetting.TEXT},
+                //        //new Setting { Key = "SmtpSenderMail",     Value = "no-reply@yourdomain.com", CreateDate = DateTime.UtcNow, IsDeleted = false, SettingType = ESetting.TEXT },
+                //        //new Setting { Key = "SmtpSenderPassword", Value = "your_smtp_password",      CreateDate = DateTime.UtcNow, IsDeleted = false, SettingType = ESetting.TEXT },
+                //        //new Setting { Key = "SmtpSmtpMail",       Value = "smtp@yourdomain.com",     CreateDate = DateTime.UtcNow, IsDeleted = false, SettingType = ESetting.TEXT },
+                //        //new Setting { Key = "SmtpSmtpPort",       Value = "587",                     CreateDate = DateTime.UtcNow, IsDeleted = false, SettingType = ESetting.TEXT },
+                //        //new Setting { Key = "SmtpSmtpServer",     Value = "smtp.yourdomain.com",     CreateDate = DateTime.UtcNow, IsDeleted = false, SettingType = ESetting.TEXT }
 
-                    };
-                foreach (var setting in settings)
-                    context.Settings.Add(setting);
-                context.SaveChanges();
+                //    };
+                //foreach (var setting in settings)
+                //    context.Settings.Add(setting);
+                //context.SaveChanges();
 
             }
         }

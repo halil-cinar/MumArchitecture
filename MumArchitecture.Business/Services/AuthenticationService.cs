@@ -82,7 +82,15 @@ namespace MumArchitecture.Business.Services
             }
             catch
             {
-                return null;
+                try
+                {
+                    var session = await _sessionRepository.Get(x => x.Token == token);
+                    return session;
+                }
+                catch
+                {
+                    return null;
+                }
             }
         }
 
@@ -223,7 +231,8 @@ namespace MumArchitecture.Business.Services
                     IpAddress = _httpContextAccessor.HttpContext?.Connection.GetFullIpAddress(),
                     UserAgent = _httpContextAccessor.HttpContext?.Request?.Headers?["User-Agent"] ?? throw new UserException("YouMustUseABrowser"),
                     UserId = null,
-                    ExpiresAt = DateTime.UtcNow.AddDays(1)
+                    ExpiresAt = DateTime.UtcNow.AddDays(1),
+                    Id=default
                 };
                 await _sessionRepository.Add(session);
 

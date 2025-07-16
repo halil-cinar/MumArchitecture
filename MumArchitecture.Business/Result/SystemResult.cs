@@ -66,6 +66,11 @@ namespace MumArchitecture.Business.Result
             });
         }
 
+        public List<string> GetMessages()
+        {
+            return Messages?.Select(x => x.Message??"")?.ToList()??new List<string>();
+        }
+
         public virtual JsonResult ToJsonResult()
         {
             var result = new Microsoft.AspNetCore.Mvc.JsonResult(new

@@ -1,4 +1,4 @@
-﻿@{
+﻿ @{
     ViewData["title"] = Lang.Value("User");
     ViewData["breadcreamp"] = string.Join("-", Lang.Value("Home"), Lang.Value("User"));
 }
@@ -43,6 +43,31 @@
                 label="@Lang.Value("Dosyalar","tr")"
                 type="file"
                 multiple="true"/>
+    <array-input name="File" label="@Lang.Value("Dosyalar", "tr")">
+        <form-input name="FileName" label="@Lang.Value("FileName")" />
+        <form-input name="FileUrl" label="@Lang.Value("FileUrl")" type="text" />
+    </array-input>
 
     <form-input name="Id" type="hidden" />
 </ajax-form>
+ @* 
+@{
+    ViewData["Title"] = "Rastgele Grafik";
+}
+
+
+<div class="container py-4">
+    <h1 class="mb-4">Rastgele Üretim Grafiği</h1>
+
+    <chart url="/api/reports/random"
+           type="line"
+           colors="#ff6384,#36a2eb"
+           horizontal="false"
+           width="800"
+           height="400">
+    </chart>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+ *@

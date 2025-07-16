@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace MumArchitecture.Domain.ListDtos
@@ -14,29 +15,8 @@ namespace MumArchitecture.Domain.ListDtos
         public string? Name { get; set; }
         public string? Key { get; set; }
         public string? Value { get; set; }
-        public string? Type
-        {
-            get
-            {
-                switch (SettingType)
-                {
-                    case ESetting.TEXT:
-                        return "string";
-                    case ESetting.FILE:
-                        return "file";
-                    case ESetting.HTML:
-                        return "html";
-                    case ESetting.BOOL:
-                        return "bool";
-                    case ESetting.FAQ:
-                        return "faq";
-                    default:
-                        return "string";
-                }
-            }
-        }  //todo: setting type a göre düzenleecek
-        public ESetting SettingType { get; set; }
-        public string? Category { get; set; }
+        
+        public List<SettingType>? SettingType { get; set; }
 
         public static implicit operator SettingListDto(Setting? entity)
         {
@@ -48,8 +28,7 @@ namespace MumArchitecture.Domain.ListDtos
                 Name = entity.Name,
                 Key = entity.Key,
                 Value = entity.Value,
-                SettingType = entity.SettingType,
-                Category=entity.Category
+                SettingType = JsonSerializer.Deserialize<List<SettingType>>(entity.SettingType) ?? new List<SettingType>(),
             };
         }
 
@@ -62,8 +41,7 @@ namespace MumArchitecture.Domain.ListDtos
                 Name = dto.Name,
                 Key = dto.Key,
                 Value = dto.Value,
-                SettingType = dto.SettingType,
-                Category= dto.Category
+                SettingType = JsonSerializer.Serialize(dto.SettingType),
             };
         }
     }

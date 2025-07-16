@@ -77,6 +77,11 @@ namespace MumArchitecture.Business.Services
                 result.AllCount = count;
                 result.AllPageCount = (int)Math.Ceiling(count / filter.Count * 1.0);
                 var settings = await Repository.GetAll(filter.ConvertDbQuery());
+                //foreach(var setting in settings)
+                //{
+                //    setting.SettingType = "[]";
+                //    await Repository.Update(setting);
+                //}
                 result.Data = settings.Select(x => (SettingListDto)x).ToList();
             }
             catch (UserException ex)
@@ -100,7 +105,6 @@ namespace MumArchitecture.Business.Services
                 var entity = (Setting)dto;
                 var oldEntity = await Repository.Get(x => x.Id == entity.Id || x.Key==dto.Key);
                 entity.Key = oldEntity?.Key??entity.Key;
-                entity.Category = oldEntity?.Category ?? entity.Category ?? "";
                 entity.SettingType = oldEntity?.SettingType ?? entity.SettingType;
                 if (oldEntity != null)
                 {

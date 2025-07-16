@@ -15,10 +15,12 @@ namespace MumArchitecture.Domain.Entities
         public string? Name { get; set; }
         public string? Key { get; set; }
         public string? Value { get; set; }
-        public string? Category { get; set; } = "Site";
-        public ESetting SettingType { get; set; }
-
-
-
+        public string SettingType { get; set; } = "[]";
+    }
+    public class SettingType
+    {
+        public string Name { get; set; } = "";
+        public ESetting Type { get; set; } = ESetting.TEXT;
+        public List<SettingType>? ElementType { get; set; } = null;//Sadece dizilerde
     }
 }

@@ -81,10 +81,25 @@ namespace MumArchitecture.Business.Result
 
                 if (string.IsNullOrEmpty(kvp.Value))
                     continue;
-
-                var property = entityType.GetProperty(kvp.Key,
-                    BindingFlags.Public | BindingFlags.Instance | BindingFlags.IgnoreCase);
-
+                var operatorkey = "equal";
+                PropertyInfo? property;
+                if (kvp.Key.Contains(":"))
+                {
+                    var parts = kvp.Key.Split(":");
+                    if (parts.FirstOrDefault()?.ToLowerInvariant() == "min")
+                    {
+                        operatorkey = "min";
+                    }
+                    else if (parts.FirstOrDefault()?.ToLowerInvariant() == "max")
+                    {
+                        operatorkey = "max";
+                    }
+                    property = entityType.GetProperty(parts.Count() > 1 ? parts[1] : kvp.Key, BindingFlags.Public | BindingFlags.Instance | BindingFlags.IgnoreCase);
+                }
+                else
+                {
+                    property = entityType.GetProperty(kvp.Key, BindingFlags.Public | BindingFlags.Instance | BindingFlags.IgnoreCase);
+                }
                 if (property is null)
                     continue;
 
@@ -106,7 +121,10 @@ namespace MumArchitecture.Business.Result
 
                     Expression body = property.PropertyType == typeof(string)
                         ? Expression.Call(left, nameof(string.Contains), Type.EmptyTypes, right)
-                        : Expression.Equal(left, right);
+                        : operatorkey == "equal" ? Expression.Equal(left, right)
+                        : operatorkey == "min" && property.GetType().IsValueType ? Expression.GreaterThanOrEqual(left, right)
+                        : operatorkey == "max" && property.GetType().IsValueType ? Expression.LessThanOrEqual(left, right)
+                        :Expression.Equal(left, right); // default to equal if no operator matched
 
                     var lambda = Expression.Lambda<Func<TEntity, bool>>(body, parameter);
                     filters.Add(lambda);

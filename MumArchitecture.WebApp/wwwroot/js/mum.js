@@ -83,10 +83,11 @@
     }
 
     function handleResponse(data) {
+        console.log(data)
         if (typeof data === "object" && data !== null) {
             if (data.hasOwnProperty("isSuccess") && data.isSuccess === false) {
                 if (Array.isArray(data.messages)) {
-                    data.messages.forEach(function (m) { mum.notify("error", m); });
+                    data.messages.forEach(function (m) { mum.notify("error", m.message); });
                 }
                 return false;
             }
@@ -102,7 +103,9 @@
             if (!handleResponse(resp) && opts.notify) { return $.Deferred().reject(resp).promise(); }
         }).fail(function (xhr) {
             hideLoader(opts.target);
-            if (opts.notify) { mum.notify("error", xhr.statusText || "Error"); }
+            let res;
+            try { res = JSON.parse(xhr.responseText); } catch (e) { }
+            if (!handleResponse(res) && opts.notify) { return $.Deferred().reject(res).promise(); }
         });
     }
 
@@ -129,7 +132,7 @@
 
     $(function () {
         $(document).ajaxError(function (event, jqxhr) {
-            mum.notify("error", jqxhr.statusText || "Ajax Error");
+            //mum.notify("error", jqxhr.statusText || "Bir hata oluştu");
         });
     });
 

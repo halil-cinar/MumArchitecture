@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MumArchitecture.Business.Abstract;
 using MumArchitecture.Business.Extensions;
+using MumArchitecture.Business.Result;
 using MumArchitecture.Domain.Dtos;
 using MumArchitecture.Domain.Entities;
 using MumArchitecture.Web;
@@ -46,5 +47,43 @@ namespace MumArchitecture.WebApp.Areas.Admin.Controllers
             var result = await _userService.ChangeActive(id);
             return View("Index");
         }
+
+        // Controller or minimal API endpoint
+        [HttpGet("api/reports/random")]
+        public JsonResult RandomChartData()
+        {
+            var rnd = new Random();
+
+            var payload = new ChartPayload
+            {
+                Labels = Enumerable.Range(1, 12).Select(i => $"Ay {i}").ToList(),
+                Datasets = new[]
+                {
+            new ChartDataset
+            {
+                Label = "Seri A",
+                Data = Enumerable.Range(0, 12).Select(_ => (double)rnd.Next(20, 100)).ToList()
+            },
+            new ChartDataset
+            {
+                Label = "Seri B",
+                Data = Enumerable.Range(0, 12).Select(_ => (double) rnd.Next(20, 100)).ToList()
+            },
+            new ChartDataset
+            {
+                Label = "Seri c",
+                Data = Enumerable.Range(0, 12).Select(_ => (double) rnd.Next(20, 100)).ToList()
+            },
+            new ChartDataset
+            {
+                Label = "Seri d",
+                Data = Enumerable.Range(0, 12).Select(_ => (double) rnd.Next(20, 100)).ToList()
+            }
+        }
+            };
+
+            return new ChartResult { Data = payload }.ToJsonResult();
+        }
+
     }
 }

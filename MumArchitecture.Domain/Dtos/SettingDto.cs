@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace MumArchitecture.Domain.Dtos
@@ -14,16 +15,16 @@ namespace MumArchitecture.Domain.Dtos
     {
         public int Id { get; set; }
 
-        [LocalizedRequired, LocalizedMaxLength(200), Sanitize]
+        [LocalizedMaxLength(200), Sanitize]
         public string? Name { get; set; }
 
-        [LocalizedRequired, LocalizedMaxLength(200), Sanitize]
+        [LocalizedMaxLength(200), Sanitize]
         public string? Key { get; set; }
 
         [LocalizedRequired, LocalizedMaxLength(4000), Sanitize]
         public string? Value { get; set; }
 
-        public ESetting SettingType { get; set; }
+        public List<SettingType> SettingType { get; set; }=new List<SettingType>();
 
 
         public static implicit operator SettingDto(Setting entity)
@@ -37,7 +38,7 @@ namespace MumArchitecture.Domain.Dtos
                 Name = entity.Name,
                 Key = entity.Key,
                 Value = entity.Value,
-                SettingType = entity.SettingType,
+                SettingType = JsonSerializer.Deserialize<List<SettingType>>(entity.SettingType)??new List<SettingType>(),
             };
         }
 
@@ -52,7 +53,7 @@ namespace MumArchitecture.Domain.Dtos
                 Name = dto.Name,
                 Key = dto.Key,
                 Value = dto.Value,
-                SettingType = dto.SettingType,
+                SettingType = JsonSerializer.Serialize(dto.SettingType),
             };
         }
     }

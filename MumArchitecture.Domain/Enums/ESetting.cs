@@ -12,6 +12,7 @@ namespace MumArchitecture.Domain.Enums
             FILE,
             HTML,
             BOOL,
-            FAQ
+            NUMBER,
+            ARRAY,
     }
 }

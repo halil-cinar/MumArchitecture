@@ -1,0 +1,53 @@
+﻿@{
+    ViewData["title"] = Lang.Value("Setting");
+    ViewData["breadcreamp"] = string.Join("-", Lang.Value("Home"), Lang.Value("Setting"));
+}
+
+<grid id="gridSettings" class="table table-hover" url="@Url.Action("Read", "Setting", new { area = "Admin" })">
+    <filters>
+        <field for="Name" type="TEXT" lg-size="3" label="@Lang.Value("Name")" />
+        <field for="Key" type="TEXT" lg-size="3" label="@Lang.Value("Key")" />
+        <field for="Category" type="Select" lg-size="3" label="@Lang.Value("Category")" items="@(new[] {
+                    new SelectListItem { Value = "main",  Text = Lang.Value("Main") },
+                    new SelectListItem { Value = "smtp", Text = "SMTP"}
+                    
+               })" />
+        
+       
+    </filters>
+
+    <column for="Id" title="@Lang.Value("Id")" style="width:4rem;" />
+    <column for="Name" title="@Lang.Value("Name")" />
+    <column for="Key" title="@Lang.Value("Key")" />
+    <column for="Value" title="@Lang.Value("Value")" />
+    <column for="Type" title="@Lang.Value("Type")" />
+    <column for="Category" title="@Lang.Value("Category")" />
+
+    <rowbutton icon="bi bi-eye"
+               title="@Lang.Value("Edit")"
+               class="btn btn-info"
+               url="@Url.ActionLink("Edit","Setting",new {area="admin",id="[id]"})" />
+
+</grid>
+@* 
+<addupdatemodal id="settingModal"
+                title="@Lang.Value("SettingEdit")"
+                get-url="@Url.Action("Get",  "Setting", new { area = "Admin" })"
+                url="@Url.Action("Save", "Setting", new { area = "Admin" })"
+                size="lg">
+
+    <input-box name="Name" label="@Lang.Value("Name")" required="true" />
+    <input-box name="Key" label="@Lang.Value("Key")" required="true" />
+    <input-box name="Value" label="@Lang.Value("Value")" type="TEXTAREA" rows="3" required="true" />
+    <input-box name="SettingType" label="@Lang.Value("SettingType")" type="SELECT"
+               items="@(new[] {
+                                   new SelectListItem { Value = "0", Text = "Text" },
+                                   new SelectListItem { Value = "1", Text = "File" },
+                                   new SelectListItem { Value = "2", Text = "Html" },
+                                   new SelectListItem { Value = "3", Text = "Bool" },
+                                   new SelectListItem { Value = "4", Text = "Faq"  }
+                              })" />
+    <input-box name="Category" label="@Lang.Value("Category")" />
+    <input-box name="Id" type="HIDDEN" />
+</addupdatemodal>
+ *@

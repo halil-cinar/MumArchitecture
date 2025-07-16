@@ -8,6 +8,7 @@ using MumArchitecture.Business.Result;
 using MumArchitecture.Domain;
 using MumArchitecture.Business.Abstract;
 using MumArchitecture.Domain.Abstract;
+using System.Web.Http;
 
 
 namespace MumArchitecture.WebApp
@@ -103,12 +104,18 @@ namespace MumArchitecture.WebApp
             controller.ViewBag.Redirect = redirectUrl;
         }
 
-        public static Filter<T> QueryConvertFilter<T>(this Controller controller)
+        public static Filter<T> QueryConvertFilter<T>(this ControllerBase controller)
             where T : Entity, new()
         {
             var filter=Filter<T>.ConvertFilter(controller.Request.Query.ToDictionary(x => x.Key, x => x.Value.ToString()));
             return filter;  
         }
+        //public static Filter<T> QueryConvertFilter<T>(this ApiController controller)
+        //    where T : Entity, new()
+        //{
+        //    var filter=Filter<T>.ConvertFilter(controller.Request.Query.ToDictionary(x => x.Key, x => x.Value.ToString()));
+        //    return filter;  
+        //}
 
         public static JsonResult ErrorJson(this Controller controller)
         {

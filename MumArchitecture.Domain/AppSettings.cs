@@ -26,6 +26,7 @@ namespace MumArchitecture.Domain
         public string? DefaultCulture { get; set; }
         public string? AllowedOrigin { get; set; }
         public bool AuditLogEnabled { get; set; }
+        public bool ApiEnabled { get; set; }
         public int ExcelMaxInRequestCount { get; set; }
         public IServiceProvider? serviceProvider { get; set; }
     }
@@ -61,6 +62,8 @@ namespace MumArchitecture.Domain
     public class ConnectionStrings
     {
         public string? DefaultConnection { get; set; }
+        public string? PostgreSQLConnection { get; set; }
+        public string? SqlType { get; set; }
     }
 
 }

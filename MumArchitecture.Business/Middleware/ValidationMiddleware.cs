@@ -71,9 +71,13 @@ namespace MumArchitecture.Business.Middleware
                                         var list = kvp.Value.Select(v => Convert.ChangeType(v, elemType)).ToArray();
                                         dict[kvp.Key] = list;
                                     }
+                                    else if (firstProp != null && firstProp.PropertyType==typeof(string))
+                                    {
+                                        dict[kvp.Key] = single.ToString();
+                                    }
                                     else
                                     {
-                                        dict[kvp.Key] = int.TryParse(single, out var num) ? num : bool.TryParse(single,out var b)?b: float.TryParse(single, out var f) ? f : single ?? "";
+                                        dict[kvp.Key] = int.TryParse(single, out var num) ? num : bool.TryParse(single, out var b) ? b : float.TryParse(single, out var f) ? f : single ?? "";
                                     }
                                 }
                                 else
@@ -135,7 +139,10 @@ namespace MumArchitecture.Business.Middleware
                                                .ToList();
 
                                 var result = new SystemResult<object> { Messages = messages };
-                                await context.Response.WriteAsync(JsonSerializer.Serialize(messages));
+                                await context.Response.WriteAsync(JsonSerializer.Serialize(result,new JsonSerializerOptions
+                                {
+                                    PropertyNamingPolicy=JsonNamingPolicy.CamelCase
+                                }));
                                 return;
                             }
                         }

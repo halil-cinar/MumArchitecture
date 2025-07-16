@@ -39,7 +39,7 @@
                url="@Url.Action("Delete", "User", new { id = "[id]" })" />
 </grid>
 
-<addupdatemodal id="userModal" title="@Lang.Value("UserEdit")" get-url="@Url.Action("Get", "Home")" url="@Url.Action("Save", "Home")" size="xl">
+<addupdatemodal id="userModal" title="@Lang.Value("UserEdit")" get-url="@Url.Action("Get", "User",new {area="Admin"})" url="@Url.Action("Save",  "User",new {area="Admin"})" size="xl">
     <input-box name="Name" label="@Lang.Value("Name")" required="true" />
     <input-box name="Surname" label="@Lang.Value("Surname")" required="true" />
     <input-box name="Phone" label="@Lang.Value("Phone")" />
@@ -49,6 +49,7 @@
     <input-box name="IdentityNumber" label="@Lang.Value("IdentityNumber")" />
     <input-box name="IsActive" label="@Lang.Value("IsActive")" type="CHECKBOX" />
     <input-box name="IsNotificationAllowed" label="@Lang.Value("IsNotificationAllowed")" type="CHECKBOX" />
+    <input-box name="Password" label="@Lang.Value("Password")" required="true" />
 
     <input-box name="Id" type="HIDDEN" />
 </addupdatemodal> 

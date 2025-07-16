@@ -11,8 +11,6 @@ namespace MumArchitecture.Domain.Dtos
         public string? Name { get; set; }
         public string? Url { get; set; }
         public byte[]? File { get; set; }
-        //dayý yeni iþimiz þöyle burda validatorlar var bunlarýn bir amacý var veri girilen bir deðiþkenin içine doðru ve
-        ///ri girildimi diye bakýyor o kadar 
     }
 }
 

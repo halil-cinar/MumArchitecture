@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Extensions;
 using MumArchitecture.Domain;
 using System;
 using System.Collections.Generic;
@@ -21,6 +22,10 @@ namespace MumArchitecture.Business.Middleware
 
         public async Task InvokeAsync(HttpContext context)
         {
+            if (context.Request.GetDisplayUrl().Contains("read", StringComparison.OrdinalIgnoreCase))
+            {
+                ;
+            }
             var acceptLanguage = context.Request.Headers["Accept-Language"].ToString();
             var cultureCode = !string.IsNullOrEmpty(acceptLanguage) ? acceptLanguage.Split(',')[0] : AppSettings.instance!.DefaultCulture!;
 

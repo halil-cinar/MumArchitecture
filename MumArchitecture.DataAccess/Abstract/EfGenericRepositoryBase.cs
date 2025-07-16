@@ -18,6 +18,7 @@ namespace MumArchitecture.DataAccess.Abstract
             var entry = _context.Entry(entity);
             entry.State = EntityState.Added;
             await _context.SaveChangesAsync();
+            DetachAllEntries();
             return entity;
         }
 
@@ -50,6 +51,8 @@ namespace MumArchitecture.DataAccess.Abstract
                 entity.UpdateDate = DateTime.UtcNow;
                 await Update(entity);
             }
+            DetachAllEntries();
+
             return entity;
         }
         public async Task<List<TEntity>?> DeleteAll(Expression<Func<TEntity, bool>> filter)
@@ -61,16 +64,17 @@ namespace MumArchitecture.DataAccess.Abstract
                 entity.UpdateDate = DateTime.UtcNow;
                 await Update(entity);
             }
+            DetachAllEntries();
 
             return entities;
         }
 
-        public Task<TEntity?> Get(Expression<Func<TEntity, bool>> filter, Expression<Func<TEntity, TEntity>>? select = null)
+        public async Task<TEntity?> Get(Expression<Func<TEntity, bool>> filter, Expression<Func<TEntity, TEntity>>? select = null)
         {
             var entities = _context.Set<TEntity>().AsNoTracking().Where(x => x.IsDeleted == false);
             return select == null
-            ? entities.FirstOrDefaultAsync(filter)
-            : entities.Where(filter).Select(select).FirstOrDefaultAsync();
+            ? await entities.FirstOrDefaultAsync(filter)
+            : await entities.Where(filter).Select(select).FirstOrDefaultAsync();
 
         }
         public async Task<TEntity?> Get(DBQuery<TEntity> query)
@@ -105,6 +109,7 @@ namespace MumArchitecture.DataAccess.Abstract
             var entry = _context.Entry(entity);
             entry.State = EntityState.Modified;
             await _context.SaveChangesAsync();
+            DetachAllEntries();
 
             return entity;
         }
@@ -150,5 +155,13 @@ namespace MumArchitecture.DataAccess.Abstract
             return data;
         }
 
+
+        private void DetachAllEntries()
+        {
+            foreach(var entry in _context.ChangeTracker.Entries().ToList())
+            {
+                entry.State = EntityState.Detached;
+            }
+        }
     }
 }

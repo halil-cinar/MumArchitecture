@@ -15,6 +15,8 @@ namespace MumArchitecture.Business.Middleware
     {
         private readonly RequestDelegate _next;
         private readonly IAuthenticationService _authenticationService;
+        private static object createSessionLockKey= new object();
+        private static object getSessionLockKey= new object();
 
         public SessionMiddleware(RequestDelegate next)
         {
@@ -25,22 +27,37 @@ namespace MumArchitecture.Business.Middleware
         public async Task InvokeAsync(HttpContext context)
         {
             var token = _authenticationService.AuthToken;
-            if (string.IsNullOrEmpty(token))
+            var path = context.Request.Path;
+            bool isStaticFile = Path.HasExtension(path);
+            if (!isStaticFile)
             {
-                var session = await _authenticationService.CreateSession();
-                if (session.IsSuccess)
+                if (string.IsNullOrEmpty(token))
                 {
-                    context.Response.Cookies.Append("Authorization", session.Data?.Token ?? "");
+                    lock (createSessionLockKey)
+                    {
+                        var session =  _authenticationService.CreateSession().Result;
+                        if (session.IsSuccess)
+                        {
+                            context.Response.Cookies.Append("Authorization", session.Data?.Token ?? "");
+                        }
+                    }
                 }
-            }
-            else
-            {
-                var session = await _authenticationService.GetSession(token);
-                if (session == null || session?.ExpiresAt < DateTime.UtcNow)
+                else
                 {
-                    context.Response.Cookies.Delete("Authorization");
-                    context.Response.Redirect("/");
-                    return;
+                    lock (getSessionLockKey)
+                    {
+                        var session = _authenticationService.GetSession(token).Result;
+                        if (session == null || session?.ExpiresAt < DateTime.UtcNow)
+                        {
+                            context.Response.Cookies.Delete("Authorization");
+                            context.Response.Redirect("/");
+                            return;
+                        }
+                        else
+                        {
+                            context.Items["UserSession"] = session;
+                        }
+                    }
                 }
             }
             await _next(context);

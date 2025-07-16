@@ -1,0 +1,33 @@
+﻿@using MumArchitecture.Domain.ListDtos
+
+@{
+    ViewData["Title"] = "Edit";
+}
+@model SettingListDto
+@{
+    ViewData["Title"] = Lang.Value("MenuEdit");
+    ViewData["breadcreamp"] = string.Join("-", Lang.Value("Home"), Lang.Value("Menu"));
+    var settingType = Model.SettingType ?? new List<MumArchitecture.Domain.Entities.SettingType>();
+}
+
+<ajax-json-form asp-name="settingsForm"
+                asp-action="/Admin/Setting/Save"
+                asp-method="post"
+                asp-settings="Model.SettingType"
+                asp-value="@Html.Raw(Model.Value)"
+                asp-entity-id="@Model.Id">
+    <input type="hidden" name="Id" value="@Model.Id" />
+    <input type="hidden" asp-for="Name" />
+    <input type="hidden" asp-for="Key" />
+</ajax-json-form>
+
+
+@* 
+<ajax-form id="menuModal"
+           action="@Url.Action("Save", "Setting", new { area = "Admin" })"
+           get-url="@Url.Action("Get", "Setting", new { area = "Admin"})"
+           columns="2">
+        @await Html.PartialAsync("_SettingInputs", settingType)
+        @* todo: valueler de girilecek  
+    <form-input name="Id" type="hidden" />
+</ajax-form> *@

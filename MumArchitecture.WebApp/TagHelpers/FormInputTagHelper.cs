@@ -27,6 +27,7 @@ namespace MumArchitecture.WebApp.TagHelpers
     */
 
     [HtmlTargetElement("form-input", ParentTag = "ajax-form")]
+    [HtmlTargetElement("form-input", ParentTag = "array-input")]
     public class FormInputTagHelper : TagHelper
     {
         public string Name { get; set; }
