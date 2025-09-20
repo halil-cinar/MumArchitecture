@@ -1,5 +1,6 @@
 
 using MumArchitecture.Domain.Abstract;
+using MumArchitecture.Domain.Converters;
 using MumArchitecture.Domain.Entities;
 using MumArchitecture.Domain.Enums;
 using MumArchitecture.Domain.Validation;
@@ -19,7 +20,7 @@ namespace MumArchitecture.Domain.Dtos
 
             return new MethodDto
             {
-                Id = entity.Id,
+                Id = entity.Id.ToPublicId(),
                 Name = entity.Name
             };
         }
@@ -31,7 +32,7 @@ namespace MumArchitecture.Domain.Dtos
 
             return new Method
             {
-                Id = dto.Id,
+                Id = dto.Id.ToDatabaseId(),
                 Name = dto.Name
             };
         }

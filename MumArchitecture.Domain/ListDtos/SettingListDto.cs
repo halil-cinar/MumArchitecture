@@ -1,4 +1,5 @@
 ﻿using MumArchitecture.Domain.Abstract;
+using MumArchitecture.Domain.Converters;
 using MumArchitecture.Domain.Entities;
 using MumArchitecture.Domain.Enums;
 using System;
@@ -24,7 +25,7 @@ namespace MumArchitecture.Domain.ListDtos
             return new SettingListDto
             {
 
-                Id = entity.Id,
+                Id = entity.Id.ToPublicId(),
                 Name = entity.Name,
                 Key = entity.Key,
                 Value = entity.Value,

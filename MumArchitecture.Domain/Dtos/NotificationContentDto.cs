@@ -1,4 +1,5 @@
-﻿using MumArchitecture.Domain.Entities;
+﻿using MumArchitecture.Domain.Converters;
+using MumArchitecture.Domain.Entities;
 using MumArchitecture.Domain.Enums;
 using MumArchitecture.Domain.Validation;
 using System;
@@ -36,7 +37,7 @@ namespace MumArchitecture.Domain.Dtos
 
             return new NotificationContentDto
             {
-                Id = entity.Id,
+                Id = entity.Id.ToPublicId() ,
                 Subject = entity.Subject,
                 Content = entity.Content,
                 Variables = entity.Variables?.Split(",")?.ToList(),
@@ -53,7 +54,7 @@ namespace MumArchitecture.Domain.Dtos
 
             return new NotificationContent
             {
-                Id = dto.Id,
+                Id = dto.Id.ToDatabaseId(),
                 Subject = dto.Subject,
                 Content = dto.Content,
                 Variables = string.Join(",",dto.Variables??new List<string>()),

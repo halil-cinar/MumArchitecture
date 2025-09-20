@@ -1,4 +1,5 @@
-﻿using MumArchitecture.Domain.Entities;
+﻿using MumArchitecture.Domain.Converters;
+using MumArchitecture.Domain.Entities;
 using MumArchitecture.Domain.Validation;
 using System;
 using System.Collections.Generic;
@@ -33,8 +34,8 @@ namespace MumArchitecture.Domain.Dtos
 
             return new SessionDto
             {
-                Id = entity.Id,
-                UserId = entity.UserId,
+                Id = entity.Id.ToPublicId(),
+                UserId = entity.UserId.ToPublicId(),
                 Token = entity.Token,
                 //ExpiresAt = entity.ExpiresAt,
                 IpAddress = entity.IpAddress,
@@ -49,8 +50,8 @@ namespace MumArchitecture.Domain.Dtos
 
             return new Session
             {
-                Id = dto.Id,
-                UserId = dto.UserId,
+                Id = dto.Id.ToDatabaseId(),
+                UserId = dto.UserId.ToDatabaseId(),
                 Token = dto.Token,
                 ExpiresAt = dto.ExpiresAt,
                 IpAddress = dto.IpAddress,

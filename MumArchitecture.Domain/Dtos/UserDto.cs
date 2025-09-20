@@ -1,4 +1,5 @@
 using MumArchitecture.Domain.Abstract;
+using MumArchitecture.Domain.Converters;
 using MumArchitecture.Domain.Entities;
 using MumArchitecture.Domain.Validation;
 
@@ -48,7 +49,7 @@ namespace MumArchitecture.Domain.Dtos
 
             return new UserDto
             {
-                Id = entity.Id,
+                Id = entity.Id.ToPublicId(),
                 Name = entity.Name,
                 Surname = entity.Surname,
                 Phone = entity.Phone,
@@ -73,7 +74,7 @@ namespace MumArchitecture.Domain.Dtos
 
             return new User
             {
-                Id = dto.Id,
+                Id = dto.Id.ToDatabaseId(),
                 Name = dto.Name,
                 Surname = dto.Surname,
                 Phone = dto.Phone,

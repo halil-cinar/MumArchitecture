@@ -1,5 +1,6 @@
 
 using MumArchitecture.Domain.Abstract;
+using MumArchitecture.Domain.Converters;
 using MumArchitecture.Domain.Entities;
 using MumArchitecture.Domain.Enums;
 using MumArchitecture.Domain.Validation;
@@ -20,9 +21,9 @@ namespace MumArchitecture.Domain.Dtos
 
             return new RoleMethodDto
             {
-                Id = entity.Id,
-                RoleId = entity.RoleId,
-                MethodId = entity.MethodId
+                Id = entity.Id.ToPublicId(),
+                RoleId = entity.RoleId.ToPublicId(),
+                MethodId = entity.MethodId.ToPublicId()
             };
         }
 
@@ -33,9 +34,9 @@ namespace MumArchitecture.Domain.Dtos
 
             return new RoleMethod
             {
-                Id = dto.Id,
-                RoleId = dto.RoleId,
-                MethodId = dto.MethodId
+                Id = dto.Id.ToDatabaseId(),
+                RoleId = dto.RoleId.ToDatabaseId(),
+                MethodId = dto.MethodId.ToDatabaseId()  
             };
         }
     }

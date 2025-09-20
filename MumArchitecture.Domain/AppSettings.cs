@@ -28,6 +28,7 @@ namespace MumArchitecture.Domain
         public bool AuditLogEnabled { get; set; }
         public bool ApiEnabled { get; set; }
         public int ExcelMaxInRequestCount { get; set; }
+        public IdConvertersSettings? IdConvertersSetting { get; set; }
         public IServiceProvider? serviceProvider { get; set; }
     }
 
@@ -64,6 +65,14 @@ namespace MumArchitecture.Domain
         public string? DefaultConnection { get; set; }
         public string? PostgreSQLConnection { get; set; }
         public string? SqlType { get; set; }
+    }
+
+    public class IdConvertersSettings
+    {
+        public string? Key { get; set; }
+        public string? Salt { get; set; }
+        public int Rounds { get; set; } = 8;
+       
     }
 
 }

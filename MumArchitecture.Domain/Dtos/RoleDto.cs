@@ -1,5 +1,6 @@
 
 using MumArchitecture.Domain.Abstract;
+using MumArchitecture.Domain.Converters;
 using MumArchitecture.Domain.Entities;
 using MumArchitecture.Domain.Enums;
 using MumArchitecture.Domain.Validation;
@@ -26,7 +27,7 @@ namespace MumArchitecture.Domain.Dtos
 
             return new RoleDto
             {
-                Id = entity.Id,
+                Id = entity.Id.ToPublicId(),
                 Name = entity.Name,
                 Description = entity.Description,
                 //Key = entity.Key
@@ -40,7 +41,7 @@ namespace MumArchitecture.Domain.Dtos
 
             return new Role
             {
-                Id = dto.Id,
+                Id = dto.Id.ToDatabaseId(),
                 Name = dto.Name,
                 Description = dto.Description,
                 //Key = dto.Key

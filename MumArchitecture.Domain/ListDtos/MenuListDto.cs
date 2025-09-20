@@ -1,4 +1,5 @@
 ﻿using MumArchitecture.Domain.Abstract;
+using MumArchitecture.Domain.Converters;
 using MumArchitecture.Domain.Dtos;
 using MumArchitecture.Domain.Entities;
 using MumArchitecture.Domain.Enums;
@@ -32,16 +33,16 @@ namespace MumArchitecture.Domain.ListDtos
             if (entity == null) return null!;
             return new MenuListDto
             {
-                Id = entity.Id,
+                Id = entity.Id.ToPublicId(),
                 Name = entity.Name,
                 DisplayOrder = entity.DisplayOrder,
                 Description = entity.Description,
                 Url = entity.Url,
                 Icon = entity.Icon,
-                ParentId = entity.ParentId,
+                ParentId = entity.ParentId.ToPublicId(),
                 IsActive = entity.IsActive,
                 IsVisible = entity.IsVisible,
-                RoleIds = JsonSerializer.Deserialize<List<int>>(entity.RoleIds)??new List<int>(),
+                RoleIds = (JsonSerializer.Deserialize<List<int>>(entity.RoleIds)??new List<int>()).Select(x=>x.ToPublicId()).ToList(),
                 //Parent = entity.Parent,
                 ParentName=entity.Parent?.Name,
                 //Children = entity.Children.Select(x=>(MenuListDto)x).ToList(),

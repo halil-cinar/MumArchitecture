@@ -1,4 +1,5 @@
 ﻿using MumArchitecture.Domain.Abstract;
+using MumArchitecture.Domain.Converters;
 using MumArchitecture.Domain.Entities;
 using System;
 using System.Collections.Generic;
@@ -20,8 +21,8 @@ namespace MumArchitecture.Domain.ListDtos
             if (entity == null) return null!;
             return new SessionListDto
             {
-                Id = entity.Id,
-                UserId = entity.UserId,
+                Id = entity.Id.ToPublicId(),
+                UserId = entity.UserId.ToPublicId(),
                 Token = entity.Token,
                 ExpiresAt = entity.ExpiresAt,
                 //IpAddress = entity.IpAddress,

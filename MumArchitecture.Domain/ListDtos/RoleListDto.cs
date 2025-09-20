@@ -1,5 +1,6 @@
 
 using MumArchitecture.Domain.Abstract;
+using MumArchitecture.Domain.Converters;
 using MumArchitecture.Domain.Entities;
 using MumArchitecture.Domain.Enums;
 
@@ -18,11 +19,11 @@ namespace MumArchitecture.Domain.Dtos
             if (entity == null) return null!;
             return new RoleListDto
             {
-                Id = entity.Id,
+                Id = entity.Id.ToPublicId(),
                 Name = entity.Name,
                 Description = entity.Description,
                 Key = entity.Key,
-                Methods=entity.Methods?.Select(x=>x.MethodId)?.ToList(),
+                Methods=entity.Methods?.Select(x=>x.MethodId.ToPublicId())?.ToList(),
             };
         }
     }

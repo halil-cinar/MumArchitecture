@@ -1,5 +1,6 @@
 
 using MumArchitecture.Domain.Abstract;
+using MumArchitecture.Domain.Converters;
 using MumArchitecture.Domain.Entities;
 using MumArchitecture.Domain.Enums;
 
@@ -14,7 +15,7 @@ namespace MumArchitecture.Domain.Dtos
             if (entity == null) return null!;
             return new MethodListDto
             {
-                Id = entity.Id,
+                Id = entity.Id.ToPublicId(),
                 Name = entity.Name,
             };
         }

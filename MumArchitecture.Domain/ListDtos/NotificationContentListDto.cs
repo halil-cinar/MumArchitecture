@@ -1,4 +1,5 @@
 ﻿using MumArchitecture.Domain.Abstract;
+using MumArchitecture.Domain.Converters;
 using MumArchitecture.Domain.Entities;
 using MumArchitecture.Domain.Enums;
 using System;
@@ -23,7 +24,7 @@ namespace MumArchitecture.Domain.ListDtos
             if (entity == null) return null!;
             return new NotificationContentListDto
             {
-                Id = entity.Id,
+                Id = entity.Id.ToPublicId(),
                 Subject = entity.Subject,
                 Content = entity.Content,
                 Variables = entity.Variables?.Split(",")?.ToList(),

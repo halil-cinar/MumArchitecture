@@ -1,4 +1,5 @@
-﻿using MumArchitecture.Domain.Entities;
+﻿using MumArchitecture.Domain.Converters;
+using MumArchitecture.Domain.Entities;
 using MumArchitecture.Domain.Enums;
 using MumArchitecture.Domain.Validation;
 using System;
@@ -38,7 +39,7 @@ namespace MumArchitecture.Domain.Dtos
 
             return new MailBoxDto
             {
-                Id = entity.Id,
+                Id = entity.Id.ToPublicId(),
                 To = entity.To,
                 From = entity.From,
                 Subject = entity.Subject,
@@ -54,7 +55,7 @@ namespace MumArchitecture.Domain.Dtos
 
             return new MailBox
             {
-                Id = dto.Id,
+                Id = dto.Id.ToDatabaseId(),
                 To = dto.To,
                 From = dto.From,
                 Subject = dto.Subject,

@@ -1,4 +1,5 @@
 ﻿using MumArchitecture.Domain.Abstract;
+using MumArchitecture.Domain.Converters;
 using MumArchitecture.Domain.Entities;
 using MumArchitecture.Domain.Enums;
 using MumArchitecture.Domain.Validation;
@@ -37,17 +38,17 @@ namespace MumArchitecture.Domain.Dtos
 
             return new MenuDto
             {
-                Id = entity.Id,
+                Id = entity.Id.ToPublicId(),
                 Name = entity.Name,
                 Description = entity.Description,
                 DisplayOrder = entity.DisplayOrder,
                 Url = entity.Url,
                 Icon = entity.Icon,
-                ParentId = entity.ParentId,
+                ParentId = entity.ParentId.ToPublicId(),
                 IsActive = entity.IsActive,
                 IsVisible = entity.IsVisible,
                 Area=entity.Area,
-                RoleIds = JsonSerializer.Deserialize<List<int>>(entity.RoleIds) ?? new List<int>()
+                RoleIds = (JsonSerializer.Deserialize<List<int>>(entity.RoleIds) ?? new List<int>()).Select(x=>x.ToPublicId()).ToList()
             };
         }
 
@@ -58,17 +59,17 @@ namespace MumArchitecture.Domain.Dtos
 
             return new Menu
             {
-                Id = dto.Id,
+                Id = dto.Id.ToDatabaseId(),
                 Name = dto.Name,
                 Description = dto.Description,
                 DisplayOrder = dto.DisplayOrder,
                 Url = dto.Url,
                 Icon = dto.Icon,
-                ParentId = dto.ParentId,
+                ParentId = dto.ParentId.ToDatabaseId(),
                 IsActive = dto.IsActive,
                 IsVisible = dto.IsVisible,
                 Area=dto.Area,
-                RoleIds = JsonSerializer.Serialize(dto.RoleIds) ?? "[]"
+                RoleIds = JsonSerializer.Serialize(dto.RoleIds.Select(x=>x.ToDatabaseId())) ?? "[]"
             };
         }
     }
