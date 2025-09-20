@@ -104,7 +104,7 @@ namespace MumArchitecture.Business.Result
                 if (property is null)
                     continue;
                 var value= kvp.Value;
-                if (property.Name.Contains("Id", StringComparison.OrdinalIgnoreCase))
+                if (property.Name.EndsWith("Id", StringComparison.OrdinalIgnoreCase))
                 {
                     if (int.TryParse(kvp.Value, out var id))
                     {
