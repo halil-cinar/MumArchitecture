@@ -12,6 +12,7 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using MumArchitecture.Domain.Converters;
 
 namespace MumArchitecture.Business.Result
 {
@@ -22,7 +23,7 @@ namespace MumArchitecture.Business.Result
         public int Count { get; set; } = 20;
         protected List<Expression<Func<TEntity, bool>>>? EntityFilter { get; private set; }
         protected List<Expression<Func<TEntity, object?>>>? Includes { get; private set; }
-        protected Expression<Func<TEntity, object>>? Order { get; private set; }
+        protected Expression<Func<TEntity, object>>? Order { get; private set; } = x => x.Id;
         protected Expression<Func<TEntity, TEntity>>? Select { get; private set; }
         public bool Descending { get; private set; } = false;
         public string? SearchKey { get; set; }
@@ -102,15 +103,26 @@ namespace MumArchitecture.Business.Result
                 }
                 if (property is null)
                     continue;
-
+                var value= kvp.Value;
+                if (property.Name.Contains("Id", StringComparison.OrdinalIgnoreCase))
+                {
+                    if (int.TryParse(kvp.Value, out var id))
+                    {
+                        value= id.ToDatabaseId().ToString();
+                    }
+                    else
+                    {
+                        continue; // id alanı integer değilse yoksay
+                    }
+                }
                 try
                 {
                     Expression left = Expression.Property(parameter, property);
                     var targetType = Nullable.GetUnderlyingType(property.PropertyType) ?? property.PropertyType;
 
                     object converted = targetType.IsEnum
-                            ? Enum.Parse(targetType, kvp.Value, true)
-                            : Convert.ChangeType(kvp.Value, targetType, CultureInfo.InvariantCulture);
+                            ? Enum.Parse(targetType, value, true)
+                            : Convert.ChangeType(value, targetType, CultureInfo.InvariantCulture);
 
                     var constant = Expression.Constant(converted, targetType);
 
@@ -124,7 +136,7 @@ namespace MumArchitecture.Business.Result
                         : operatorkey == "equal" ? Expression.Equal(left, right)
                         : operatorkey == "min" && property.GetType().IsValueType ? Expression.GreaterThanOrEqual(left, right)
                         : operatorkey == "max" && property.GetType().IsValueType ? Expression.LessThanOrEqual(left, right)
-                        :Expression.Equal(left, right); // default to equal if no operator matched
+                        : Expression.Equal(left, right); // default to equal if no operator matched
 
                     var lambda = Expression.Lambda<Func<TEntity, bool>>(body, parameter);
                     filters.Add(lambda);
@@ -269,6 +281,17 @@ namespace MumArchitecture.Business.Result
                 Page = Page,
                 Select = Select
             };
+        }
+        public Filter<TEntity> CopyFrom(Filter<TEntity> filter)
+        {
+            Count = filter.Count;
+            Descending = filter.Descending;
+            EntityFilter = filter.EntityFilter;
+            Includes = filter.Includes;
+            Order = filter.Order;
+            Page = filter.Page;
+            Select = filter.Select;
+            return this;
         }
 
         public Filter<TEntity> AddSearchKey(params string[] searchparams)
